@@ -1,39 +1,31 @@
 package main
 
 import (
-	"context"
-	"fmt"
+	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/github"
-	"golang.org/x/oauth2"
 )
 
 func main() {
-	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: Config.GitHub.Token},
-	)
-	httpClient := oauth2.NewClient(context.Background(), src)
-
-	client := githubv4.NewClient(httpClient)
-
-	var q struct {
-		github.RepositoryOwner `graphql:"repositoryOwner(login: $login)"`
-	}
+	github.NewClient(Config.GitHub.Token)
 
 	variables := map[string]interface{}{
 		"login":  githubv4.String("skanehira"),
-		"first":  githubv4.Int(20),
+		"first":  githubv4.Int(10),
 		"cursor": (*githubv4.String)(nil),
 	}
-	if err := client.Query(context.Background(), &q, variables); err != nil {
+
+	repos, err := github.GetRepos(variables)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, node := range q.RepositoryOwner.Repositories.Nodes {
-		fmt.Println(node.NameWithOwner)
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(repos); err != nil {
+		log.Fatal(err)
 	}
-
-	fmt.Println(q.RepositoryOwner.Repositories.PageInfo.EndCursor)
 }
