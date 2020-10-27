@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/shurcooL/githubv4"
+	"github.com/skanehira/ght/github"
 	"golang.org/x/oauth2"
 )
 
@@ -18,7 +19,7 @@ func main() {
 	client := githubv4.NewClient(httpClient)
 
 	var q struct {
-		RepositoryOwner `graphql:"repositoryOwner(login: $login)"`
+		github.RepositoryOwner `graphql:"repositoryOwner(login: $login)"`
 	}
 
 	variables := map[string]interface{}{
