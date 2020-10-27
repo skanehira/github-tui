@@ -9,13 +9,16 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
+var Config config
+
+type config struct {
 	GitHub struct {
 		Token string `yaml:"token"`
 	} `yaml:"github"`
+	ConfigFile string
 }
 
-func NewConfig() Config {
+func init() {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		log.Fatal(err)
@@ -28,14 +31,16 @@ func NewConfig() Config {
 		log.Fatal(err)
 	}
 
-	var config Config
-	if err := yaml.Unmarshal(b, &config); err != nil {
+	var conf config
+	if err := yaml.Unmarshal(b, &conf); err != nil {
 		log.Fatal(err)
 	}
 
-	if config.GitHub.Token == "" {
+	if conf.GitHub.Token == "" {
 		log.Fatal("github token is empty")
 	}
 
-	return config
+	conf.ConfigFile = configFile
+
+	Config = conf
 }

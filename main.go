@@ -10,9 +10,8 @@ import (
 )
 
 func main() {
-	config := NewConfig()
 	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: config.GitHub.Token},
+		&oauth2.Token{AccessToken: Config.GitHub.Token},
 	)
 	httpClient := oauth2.NewClient(context.Background(), src)
 
