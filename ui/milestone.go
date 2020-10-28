@@ -26,11 +26,11 @@ func NewMilestoneUI(updater func(f func())) *MilestoneUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("millestone list").SetTitleAlign(tview.AlignLeft)
-	ui.updateLabelList()
+	ui.updateMilestoneList()
 	return ui
 }
 
-func (ui *MilestoneUI) updateLabelList() {
+func (ui *MilestoneUI) updateMilestoneList() {
 	table := ui.Clear()
 
 	ui.updater(func() {

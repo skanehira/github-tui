@@ -27,11 +27,11 @@ func NewProjectUI(updater func(f func())) *ProjectUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("project list").SetTitleAlign(tview.AlignLeft)
-	ui.updateLabelList()
+	ui.updateProjectList()
 	return ui
 }
 
-func (ui *ProjectUI) updateLabelList() {
+func (ui *ProjectUI) updateProjectList() {
 	table := ui.Clear()
 
 	ui.updater(func() {
