@@ -19,7 +19,7 @@ type Issue struct {
 	Body      string
 	Author    string
 	Labels    []string
-	Assigness []string
+	Assignees []string
 }
 
 type IssueUI struct {
@@ -94,11 +94,11 @@ func (ui *IssueUI) updateIssueList() {
 				}
 				issue.Labels = labels
 
-				assigness := make([]string, len(node.Assignees.Nodes))
+				assignees := make([]string, len(node.Assignees.Nodes))
 				for i, a := range node.Assignees.Nodes {
-					assigness[i] = string(a.Login)
+					assignees[i] = string(a.Login)
 				}
-				issue.Assigness = assigness
+				issue.Assignees = assignees
 
 				ui.issues[i] = issue
 			}
@@ -124,7 +124,7 @@ func (ui *IssueUI) updateIssueList() {
 				table.SetCell(i+1, 4, tview.NewTableCell(strings.Join(issue.Labels, ",")).
 					SetTextColor(tcell.ColorAqua))
 
-				table.SetCell(i+1, 5, tview.NewTableCell(strings.Join(issue.Assigness, ",")).
+				table.SetCell(i+1, 5, tview.NewTableCell(strings.Join(issue.Assignees, ",")).
 					SetTextColor(tcell.ColorOlive))
 			}
 
