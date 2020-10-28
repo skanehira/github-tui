@@ -31,13 +31,9 @@ type Issues struct {
 		Author struct {
 			Login githubv4.String
 		}
-		Title  githubv4.String
-		URL    githubv4.URI
-		Labels struct {
-			Nodes []struct {
-				Name githubv4.String
-			}
-		} `graphql:"labels(first: $first)"`
+		Title     githubv4.String
+		URL       githubv4.URI
+		Labels    Labels `graphql:"labels(first: $first)"`
 		Assignees struct {
 			Nodes []struct {
 				Login githubv4.String
@@ -47,5 +43,11 @@ type Issues struct {
 	PageInfo struct {
 		EndCursor   githubv4.String
 		HasNextPage githubv4.Boolean
+	}
+}
+
+type Labels struct {
+	Nodes []struct {
+		Name githubv4.String
 	}
 }

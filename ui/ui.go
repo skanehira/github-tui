@@ -5,33 +5,34 @@ import "github.com/rivo/tview"
 type UI struct {
 	app     *tview.Application
 	pages   *tview.Pages
-	updater chan func()
+	updater func(f func())
 }
 
 func New() *UI {
-	return &UI{
-		app:     tview.NewApplication(),
-		updater: make(chan func(), 10),
+	ui := &UI{
+		app: tview.NewApplication(),
 	}
+
+	ui.updater = func(f func()) {
+		go ui.app.QueueUpdateDraw(f)
+	}
+
+	return ui
 }
 
 func (ui *UI) Start() error {
 	view, viewUpdater := NewViewUI()
-	issue := NewIssueUI(ui.updater, viewUpdater)
+	labelUI := NewLabelsUI(ui.updater)
+	issueUI := NewIssueUI(ui.updater, viewUpdater)
 	grid := tview.NewGrid().SetRows(0, 0, 0, 0).SetColumns(0, 0, 0, 0).
-		AddItem(issue, 0, 0, 1, 4, 0, 0, true).
-		AddItem(view, 1, 0, 3, 2, 0, 0, true)
+		AddItem(issueUI, 0, 0, 1, 4, 0, 0, true).
+		AddItem(view, 1, 0, 3, 2, 0, 0, true).
+		AddItem(labelUI, 1, 2, 3, 1, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
 	ui.app.SetRoot(ui.pages, true)
-
-	go func() {
-		for f := range ui.updater {
-			ui.app.QueueUpdateDraw(f)
-		}
-	}()
 
 	if err := ui.app.Run(); err != nil {
 		ui.app.Stop()

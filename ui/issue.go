@@ -24,21 +24,20 @@ type Issue struct {
 
 type IssueUI struct {
 	issues      []Issue
-	updater     chan<- func()
+	updater     func(f func())
 	viewUpdater func(text string)
 	*tview.Table
 }
 
-func NewIssueUI(updater chan<- func(), viewUpdater func(text string)) *IssueUI {
+func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *IssueUI {
 	ui := &IssueUI{
 		Table:       tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(1, 1),
 		updater:     updater,
 		viewUpdater: viewUpdater,
 	}
 
-	ui.SetTitle("issue list").SetTitleAlign(tview.AlignLeft)
+	ui.SetBorder(true).SetTitle("issue list").SetTitleAlign(tview.AlignLeft)
 	ui.updateIssueList()
-	ui.SetBorder(true)
 	return ui
 }
 
@@ -66,7 +65,7 @@ func (ui *IssueUI) updateIssueList() {
 	}
 
 	go func() {
-		ui.updater <- func() {
+		ui.updater(func() {
 			v := map[string]interface{}{
 				"owner":  githubv4.String(config.GitHub.Owner),
 				"name":   githubv4.String(config.GitHub.Repo),
@@ -133,14 +132,14 @@ func (ui *IssueUI) updateIssueList() {
 			if len(ui.issues) > 0 {
 				ui.viewUpdater(ui.issues[0].Body)
 			}
-		}
+		})
 	}()
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
-			ui.updater <- func() {
+			ui.updater(func() {
 				ui.viewUpdater(ui.issues[row-1].Body)
-			}
+			})
 		}
 	})
 }
