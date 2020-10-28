@@ -50,6 +50,7 @@ type Labels struct {
 	Nodes []struct {
 		Name        githubv4.String
 		Description githubv4.String
+		Color       githubv4.String
 	}
 }
 

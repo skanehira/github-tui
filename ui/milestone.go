@@ -57,7 +57,7 @@ func (ui *MilestoneUI) updateLabelList() {
 			}
 
 			table.SetCell(i, 0, tview.NewTableCell(title).
-				SetTextColor(tcell.ColorWhite).SetExpansion(1))
+				SetTextColor(tcell.ColorPowderBlue).SetExpansion(1))
 		}
 
 		ui.ScrollToBeginning()

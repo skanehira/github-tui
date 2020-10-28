@@ -13,6 +13,7 @@ import (
 type Label struct {
 	Name        string
 	Description string
+	Color       string
 }
 
 type LabelsUI struct {
@@ -51,12 +52,15 @@ func (ui *LabelsUI) updateLabelList() {
 		for i, l := range resp.Nodes {
 			name := string(l.Name)
 			description := string(l.Description)
+			color := "#" + string(l.Color)
 			labels[i] = Label{
 				Name:        name,
 				Description: description,
+				Color:       color,
 			}
+
 			table.SetCell(i, 1, tview.NewTableCell(name).
-				SetTextColor(tcell.ColorWhite).SetExpansion(1))
+				SetTextColor(tcell.GetColor(color)).SetExpansion(1))
 		}
 
 		ui.ScrollToBeginning()
