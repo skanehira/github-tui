@@ -65,3 +65,15 @@ func GetRepoMillestones(variables map[string]interface{}) (*Milestones, error) {
 	}
 	return &q.Repository.Milestones, nil
 }
+
+func GetRepoProjects(variables map[string]interface{}) (*Projects, error) {
+	var q struct {
+		Repository struct {
+			Projects `graphql:"projects(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC})"`
+		} `graphql:"repository(name: $name, owner: $owner)"`
+	}
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return &q.Repository.Projects, nil
+}

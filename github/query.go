@@ -61,3 +61,9 @@ type Milestones struct {
 		Description githubv4.String
 	}
 }
+
+type Projects struct {
+	Nodes []struct {
+		Name githubv4.String
+	}
+}
