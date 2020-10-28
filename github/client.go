@@ -77,3 +77,15 @@ func GetRepoProjects(variables map[string]interface{}) (*Projects, error) {
 	}
 	return &q.Repository.Projects, nil
 }
+
+func GetRepoAssignableUsers(variables map[string]interface{}) (*AssignableUsers, error) {
+	var q struct {
+		Repository struct {
+			AssignableUsers `graphql:"assignableUsers(first: $first, after: $cursor)"`
+		} `graphql:"repository(name: $name, owner: $owner)"`
+	}
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return &q.Repository.AssignableUsers, nil
+}

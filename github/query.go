@@ -46,6 +46,12 @@ type Issues struct {
 	}
 }
 
+type AssignableUsers struct {
+	Nodes []struct {
+		Login githubv4.String
+	}
+}
+
 type Labels struct {
 	Nodes []struct {
 		Name        githubv4.String
