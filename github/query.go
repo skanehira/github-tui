@@ -26,6 +26,7 @@ type Repositories struct {
 type Issues struct {
 	Nodes []struct {
 		Number githubv4.Int
+		Body   githubv4.String
 		State  githubv4.String
 		Author struct {
 			Login githubv4.String

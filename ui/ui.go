@@ -11,14 +11,16 @@ type UI struct {
 func New() *UI {
 	return &UI{
 		app:     tview.NewApplication(),
-		updater: make(chan func(), 0),
+		updater: make(chan func(), 10),
 	}
 }
 
 func (ui *UI) Start() error {
-	issue := newIssueUI(ui.updater)
-	grid := tview.NewGrid().SetRows(0).
-		AddItem(issue, 0, 0, 1, 1, 0, 0, true)
+	view, viewUpdater := NewViewUI()
+	issue := NewIssueUI(ui.updater, viewUpdater)
+	grid := tview.NewGrid().SetRows(0, 0, 0, 0).SetColumns(0, 0, 0, 0).
+		AddItem(issue, 0, 0, 1, 4, 0, 0, true).
+		AddItem(view, 1, 0, 3, 2, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)

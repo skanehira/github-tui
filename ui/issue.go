@@ -15,22 +15,25 @@ import (
 type Issue struct {
 	Number    int
 	State     string
-	Author    string
 	Title     string
+	Body      string
+	Author    string
 	Labels    []string
 	Assigness []string
 }
 
-type issueUI struct {
-	issues  []Issue
-	updater chan<- func()
+type IssueUI struct {
+	issues      []Issue
+	updater     chan<- func()
+	viewUpdater func(text string)
 	*tview.Table
 }
 
-func newIssueUI(updater chan<- func()) *issueUI {
-	ui := &issueUI{
-		Table:   tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(0, 1),
-		updater: updater,
+func NewIssueUI(updater chan<- func(), viewUpdater func(text string)) *IssueUI {
+	ui := &IssueUI{
+		Table:       tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(1, 1),
+		updater:     updater,
+		viewUpdater: viewUpdater,
 	}
 
 	ui.SetTitle("issue list").SetTitleAlign(tview.AlignLeft)
@@ -39,7 +42,7 @@ func newIssueUI(updater chan<- func()) *issueUI {
 	return ui
 }
 
-func (ui *issueUI) updateIssueList() {
+func (ui *IssueUI) updateIssueList() {
 	table := ui.Clear()
 
 	headers := []string{
@@ -83,6 +86,7 @@ func (ui *issueUI) updateIssueList() {
 					State:  string(node.State),
 					Author: string(node.Author.Login),
 					Title:  string(node.Title),
+					Body:   string(node.Body),
 				}
 
 				labels := make([]string, len(node.Labels.Nodes))
@@ -124,6 +128,19 @@ func (ui *issueUI) updateIssueList() {
 				table.SetCell(i+1, 5, tview.NewTableCell(strings.Join(issue.Assigness, ",")).
 					SetTextColor(tcell.ColorOlive))
 			}
+
+			ui.ScrollToBeginning()
+			if len(ui.issues) > 0 {
+				ui.viewUpdater(ui.issues[0].Body)
+			}
 		}
 	}()
+
+	ui.SetSelectionChangedFunc(func(row, col int) {
+		if row > 0 {
+			ui.updater <- func() {
+				ui.viewUpdater(ui.issues[row-1].Body)
+			}
+		}
+	})
 }
