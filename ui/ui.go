@@ -22,12 +22,14 @@ func New() *UI {
 
 func (ui *UI) Start() error {
 	view, viewUpdater := NewViewUI()
-	labelUI := NewLabelsUI(ui.updater)
 	issueUI := NewIssueUI(ui.updater, viewUpdater)
+	labelUI := NewLabelsUI(ui.updater)
+	millestoneUI := NewMilestoneUI(ui.updater)
 	grid := tview.NewGrid().SetRows(0, 0, 0, 0).SetColumns(0, 0, 0, 0).
 		AddItem(issueUI, 0, 0, 1, 4, 0, 0, true).
 		AddItem(view, 1, 0, 3, 2, 0, 0, true).
-		AddItem(labelUI, 1, 2, 3, 1, 0, 0, true)
+		AddItem(labelUI, 1, 2, 3, 1, 0, 0, true).
+		AddItem(millestoneUI, 1, 3, 3, 1, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)

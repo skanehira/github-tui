@@ -48,6 +48,15 @@ type Issues struct {
 
 type Labels struct {
 	Nodes []struct {
-		Name githubv4.String
+		Name        githubv4.String
+		Description githubv4.String
+	}
+}
+
+type Milestones struct {
+	Nodes []struct {
+		Title       githubv4.String
+		State       githubv4.String
+		Description githubv4.String
 	}
 }

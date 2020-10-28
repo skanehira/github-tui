@@ -10,52 +10,53 @@ import (
 	"github.com/skanehira/ght/github"
 )
 
-type Label struct {
-	Name        string
+type Milestone struct {
+	Title       string
 	Description string
 }
 
-type LabelsUI struct {
+type MilestoneUI struct {
 	updater func(f func())
 	*tview.Table
 }
 
-func NewLabelsUI(updater func(f func())) *LabelsUI {
-	ui := &LabelsUI{
+func NewMilestoneUI(updater func(f func())) *MilestoneUI {
+	ui := &MilestoneUI{
 		Table:   tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(0, 0),
 		updater: updater,
 	}
-	ui.SetBorder(true).SetTitle("label list").SetTitleAlign(tview.AlignLeft)
+	ui.SetBorder(true).SetTitle("millestone list").SetTitleAlign(tview.AlignLeft)
 	ui.updateLabelList()
 	return ui
 }
 
-func (ui *LabelsUI) updateLabelList() {
+func (ui *MilestoneUI) updateLabelList() {
 	table := ui.Clear()
 
 	ui.updater(func() {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
 			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
+			"first":  githubv4.Int(50),
 			"cursor": (*githubv4.String)(nil),
 		}
-		resp, err := github.GetRepoLabels(v)
+		resp, err := github.GetRepoMillestones(v)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		labels := make([]Label, len(resp.Nodes))
+		labels := make([]Milestone, len(resp.Nodes))
 
-		for i, l := range resp.Nodes {
-			name := string(l.Name)
-			description := string(l.Description)
-			labels[i] = Label{
-				Name:        name,
+		for i, m := range resp.Nodes {
+			title := string(m.Title)
+			description := string(m.Description)
+			labels[i] = Milestone{
+				Title:       title,
 				Description: description,
 			}
-			table.SetCell(i, 1, tview.NewTableCell(name).
+
+			table.SetCell(i, 0, tview.NewTableCell(title).
 				SetTextColor(tcell.ColorWhite).SetExpansion(1))
 		}
 
