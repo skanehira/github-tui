@@ -29,3 +29,15 @@ func GetRepos(variables map[string]interface{}) (*Repositories, error) {
 	}
 	return &q.RepositoryOwner.Repositories, nil
 }
+
+func GetIssue(variables map[string]interface{}) (*Issues, error) {
+	var q struct {
+		Repository struct {
+			Issues `graphql:"issues(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC})"`
+		} `graphql:"repository(name: $name, owner: $owner)"`
+	}
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return &q.Repository.Issues, nil
+}

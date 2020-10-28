@@ -22,3 +22,29 @@ type Repositories struct {
 		HasNextPage githubv4.Boolean
 	}
 }
+
+type Issues struct {
+	Nodes []struct {
+		Number githubv4.Int
+		State  githubv4.String
+		Author struct {
+			Login githubv4.String
+		}
+		Title  githubv4.String
+		URL    githubv4.URI
+		Labels struct {
+			Nodes []struct {
+				Name githubv4.String
+			}
+		} `graphql:"labels(first: $first)"`
+		Assignees struct {
+			Nodes []struct {
+				Login githubv4.String
+			}
+		} `graphql:"assignees(first: $first)"`
+	}
+	PageInfo struct {
+		EndCursor   githubv4.String
+		HasNextPage githubv4.Boolean
+	}
+}
