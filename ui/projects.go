@@ -56,7 +56,7 @@ func (ui *ProjectUI) updateProjectList() {
 			}
 
 			table.SetCell(i, 1, tview.NewTableCell(name).
-				SetTextColor(tcell.ColorSnow).SetExpansion(1))
+				SetTextColor(tcell.ColorSkyblue).SetExpansion(1))
 		}
 
 		ui.ScrollToBeginning()

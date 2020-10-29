@@ -54,7 +54,7 @@ func (ui *AssigneesUI) updateAssignees() {
 			}
 
 			table.SetCell(i, 1, tview.NewTableCell(login).
-				SetTextColor(tcell.ColorSnow).SetExpansion(1))
+				SetTextColor(tcell.ColorYellowGreen).SetExpansion(1))
 		}
 
 		ui.ScrollToBeginning()
