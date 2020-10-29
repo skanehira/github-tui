@@ -55,7 +55,7 @@ func (ui *ProjectUI) updateProjectList() {
 				Name: name,
 			}
 
-			table.SetCell(i, 1, tview.NewTableCell(name).
+			table.SetCell(i, 0, tview.NewTableCell(name).
 				SetTextColor(tcell.ColorSkyblue).SetExpansion(1))
 		}
 

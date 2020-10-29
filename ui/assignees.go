@@ -53,7 +53,7 @@ func (ui *AssigneesUI) updateAssignees() {
 				Login: login,
 			}
 
-			table.SetCell(i, 1, tview.NewTableCell(login).
+			table.SetCell(i, 0, tview.NewTableCell(login).
 				SetTextColor(tcell.ColorYellowGreen).SetExpansion(1))
 		}
 

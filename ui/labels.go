@@ -59,7 +59,7 @@ func (ui *LabelsUI) updateLabelList() {
 				Color:       color,
 			}
 
-			table.SetCell(i, 1, tview.NewTableCell(name).
+			table.SetCell(i, 0, tview.NewTableCell(name).
 				SetTextColor(tcell.GetColor(color)).SetExpansion(1))
 		}
 
