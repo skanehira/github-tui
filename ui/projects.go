@@ -27,26 +27,25 @@ func NewProjectUI(updater func(f func())) *ProjectUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("project list").SetTitleAlign(tview.AlignLeft)
-	ui.updateProjectList()
+	go ui.updateProjectList()
 	return ui
 }
 
 func (ui *ProjectUI) updateProjectList() {
 	table := ui.Clear()
+	v := map[string]interface{}{
+		"owner":  githubv4.String(config.GitHub.Owner),
+		"name":   githubv4.String(config.GitHub.Repo),
+		"first":  githubv4.Int(100),
+		"cursor": (*githubv4.String)(nil),
+	}
+	resp, err := github.GetRepoProjects(v)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	ui.updater(func() {
-		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
-			"cursor": (*githubv4.String)(nil),
-		}
-		resp, err := github.GetRepoProjects(v)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
 		labels := make([]Project, len(resp.Nodes))
 
 		for i, p := range resp.Nodes {

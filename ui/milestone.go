@@ -26,26 +26,25 @@ func NewMilestoneUI(updater func(f func())) *MilestoneUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("millestone list").SetTitleAlign(tview.AlignLeft)
-	ui.updateMilestoneList()
+	go ui.updateMilestoneList()
 	return ui
 }
 
 func (ui *MilestoneUI) updateMilestoneList() {
 	table := ui.Clear()
+	v := map[string]interface{}{
+		"owner":  githubv4.String(config.GitHub.Owner),
+		"name":   githubv4.String(config.GitHub.Repo),
+		"first":  githubv4.Int(100),
+		"cursor": (*githubv4.String)(nil),
+	}
+	resp, err := github.GetRepoMillestones(v)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	ui.updater(func() {
-		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(50),
-			"cursor": (*githubv4.String)(nil),
-		}
-		resp, err := github.GetRepoMillestones(v)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
 		labels := make([]Milestone, len(resp.Nodes))
 
 		for i, m := range resp.Nodes {

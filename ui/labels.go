@@ -27,26 +27,24 @@ func NewLabelsUI(updater func(f func())) *LabelsUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("label list").SetTitleAlign(tview.AlignLeft)
-	ui.updateLabelList()
+	go ui.updateLabelList()
 	return ui
 }
 
 func (ui *LabelsUI) updateLabelList() {
 	table := ui.Clear()
-
+	v := map[string]interface{}{
+		"owner":  githubv4.String(config.GitHub.Owner),
+		"name":   githubv4.String(config.GitHub.Repo),
+		"first":  githubv4.Int(100),
+		"cursor": (*githubv4.String)(nil),
+	}
+	resp, err := github.GetRepoLabels(v)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	ui.updater(func() {
-		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
-			"cursor": (*githubv4.String)(nil),
-		}
-		resp, err := github.GetRepoLabels(v)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
 		labels := make([]Label, len(resp.Nodes))
 
 		for i, l := range resp.Nodes {

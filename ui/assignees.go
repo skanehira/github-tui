@@ -25,26 +25,24 @@ func NewAssignableUI(updater func(f func())) *AssigneesUI {
 		updater: updater,
 	}
 	ui.SetBorder(true).SetTitle("assignabel user list").SetTitleAlign(tview.AlignLeft)
-	ui.updateAssignees()
+	go ui.updateAssignees()
 	return ui
 }
 
 func (ui *AssigneesUI) updateAssignees() {
 	table := ui.Clear()
-
+	v := map[string]interface{}{
+		"owner":  githubv4.String(config.GitHub.Owner),
+		"name":   githubv4.String(config.GitHub.Repo),
+		"first":  githubv4.Int(100),
+		"cursor": (*githubv4.String)(nil),
+	}
+	resp, err := github.GetRepoAssignableUsers(v)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	ui.updater(func() {
-		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
-			"cursor": (*githubv4.String)(nil),
-		}
-		resp, err := github.GetRepoAssignableUsers(v)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
 		assignees := make([]AssignableUsers, len(resp.Nodes))
 
 		for i, p := range resp.Nodes {
