@@ -49,6 +49,7 @@ type AssignableUsers struct {
 	Nodes []struct {
 		Login githubv4.String
 	}
+	PageInfo PageInfo
 }
 
 type Labels struct {
