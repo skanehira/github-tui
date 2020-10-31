@@ -18,12 +18,14 @@ func (l *Label) Key() string {
 	return l.Name
 }
 
-func (l *Label) Fields() []string {
-	return []string{l.Name}
+func (l *Label) Fields() []Field {
+	return []Field{
+		{Text: l.Name, Color: tcell.ColorYellow},
+	}
 }
 
 func NewLabelsUI(updater func(f func())) *SelectListUI {
-	getList := func(cursor *string) ([]ListData, github.PageInfo) {
+	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
 			"name":   githubv4.String(config.GitHub.Repo),
@@ -36,7 +38,7 @@ func NewLabelsUI(updater func(f func())) *SelectListUI {
 			return nil, github.PageInfo{}
 		}
 
-		labels := make([]ListData, len(resp.Nodes))
+		labels := make([]List, len(resp.Nodes))
 		for i, l := range resp.Nodes {
 			name := string(l.Name)
 			description := string(l.Description)
@@ -52,5 +54,5 @@ func NewLabelsUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("label list", updater, tcell.ColorYellow, getList, capture)
+	return NewSelectListUI("label list", nil, updater, tcell.ColorYellow, getList, capture)
 }

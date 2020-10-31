@@ -14,12 +14,14 @@ type Project struct {
 func (p *Project) Key() string {
 	return p.Name
 }
-func (p *Project) Fields() []string {
-	return []string{p.Name}
+func (p *Project) Fields() []Field {
+	return []Field{
+		{Text: p.Name, Color: tcell.ColorLightSalmon},
+	}
 }
 
 func NewProjectUI(updater func(f func())) *SelectListUI {
-	getList := func(cursor *string) ([]ListData, github.PageInfo) {
+	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
 			"name":   githubv4.String(config.GitHub.Repo),
@@ -31,7 +33,7 @@ func NewProjectUI(updater func(f func())) *SelectListUI {
 			return nil, github.PageInfo{}
 		}
 
-		projects := make([]ListData, len(resp.Nodes))
+		projects := make([]List, len(resp.Nodes))
 		for i, m := range resp.Nodes {
 			projects[i] = &Project{
 				Name: string(m.Name),
@@ -45,5 +47,5 @@ func NewProjectUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("project list", updater, tcell.ColorLightSalmon, getList, capture)
+	return NewSelectListUI("project list", nil, updater, tcell.ColorLightSalmon, getList, capture)
 }

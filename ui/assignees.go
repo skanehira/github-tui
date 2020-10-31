@@ -15,12 +15,14 @@ func (a *AssignableUser) Key() string {
 	return a.Login
 }
 
-func (a *AssignableUser) Fields() []string {
-	return []string{a.Login}
+func (a *AssignableUser) Fields() []Field {
+	return []Field{
+		{Text: a.Login, Color: tcell.ColorBlue},
+	}
 }
 
 func NewAssignableUI(updater func(f func())) *SelectListUI {
-	getList := func(cursor *string) ([]ListData, github.PageInfo) {
+	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
 			"name":   githubv4.String(config.GitHub.Repo),
@@ -32,7 +34,7 @@ func NewAssignableUI(updater func(f func())) *SelectListUI {
 			return nil, github.PageInfo{}
 		}
 
-		assignees := make([]ListData, len(resp.Nodes))
+		assignees := make([]List, len(resp.Nodes))
 		for i, p := range resp.Nodes {
 			assignees[i] = &AssignableUser{
 				Login: string(p.Login),
@@ -45,5 +47,5 @@ func NewAssignableUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("assibnable user list", updater, tcell.ColorBlue, getList, capture)
+	return NewSelectListUI("assibnable user list", nil, updater, tcell.ColorBlue, getList, capture)
 }

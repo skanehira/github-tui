@@ -6,13 +6,18 @@ import (
 	"github.com/skanehira/ght/github"
 )
 
-type ListData interface {
+type List interface {
 	Key() string
-	Fields() []string
+	Fields() []Field
+}
+
+type Field struct {
+	Text  string
+	Color tcell.Color
 }
 
 type (
-	GetListFunc func(cursor *string) ([]ListData, github.PageInfo)
+	GetListFunc func(cursor *string) ([]List, github.PageInfo)
 	CaptureFunc func(event *tcell.EventKey) *tcell.EventKey
 )
 
@@ -21,22 +26,28 @@ type SelectListUI struct {
 	hasNext   bool
 	getList   GetListFunc
 	capture   CaptureFunc
-	list      []ListData
+	header    []string
+	list      []List
 	selected  map[string]struct{}
 	textColor tcell.Color
 	updater   func(func())
 	*tview.Table
 }
 
-func NewSelectListUI(title string, updater func(func()), textColor tcell.Color, getList GetListFunc, capture CaptureFunc) *SelectListUI {
+func NewSelectListUI(title string, header []string, updater func(func()), textColor tcell.Color, getList GetListFunc, capture CaptureFunc) *SelectListUI {
 	ui := &SelectListUI{
 		hasNext:   true,
 		getList:   getList,
 		capture:   capture,
+		header:    header,
 		selected:  make(map[string]struct{}),
 		textColor: textColor,
 		updater:   updater,
-		Table:     tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(0, 0),
+		Table:     tview.NewTable().SetSelectable(true, false).Select(0, 0),
+	}
+
+	if len(header) > 0 {
+		ui.SetFixed(1, 0)
 	}
 	ui.SetBorder(true).SetTitle(title).SetTitleAlign(tview.AlignLeft)
 
@@ -58,14 +69,29 @@ func (ui *SelectListUI) GetList() {
 func (ui *SelectListUI) UpdateList() {
 	ui.updater(func() {
 		ui.Clear()
+		for i, h := range ui.header {
+			ui.SetCell(0, i, &tview.TableCell{
+				Text:            h,
+				NotSelectable:   true,
+				Align:           tview.AlignLeft,
+				Color:           tcell.ColorWhite,
+				BackgroundColor: tcell.ColorDefault,
+				Attributes:      tcell.AttrBold | tcell.AttrUnderline,
+			})
+		}
+
+		h := 0
+		if len(ui.header) > 0 {
+			h++
+		}
 		for i, data := range ui.list {
 			if _, ok := ui.selected[data.Key()]; ok {
-				ui.SetCell(i, 0, tview.NewTableCell("◉").SetTextColor(ui.textColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell("◉").SetTextColor(ui.textColor))
 			} else {
-				ui.SetCell(i, 0, tview.NewTableCell("◯").SetTextColor(ui.textColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell("◯").SetTextColor(ui.textColor))
 			}
 			for j, f := range data.Fields() {
-				ui.SetCell(i, j+1, tview.NewTableCell(f).SetTextColor(ui.textColor))
+				ui.SetCell(i+h, j+1, tview.NewTableCell(f.Text).SetTextColor(f.Color))
 			}
 		}
 	})
