@@ -2,6 +2,11 @@ package github
 
 import "github.com/shurcooL/githubv4"
 
+type PageInfo struct {
+	EndCursor   githubv4.String
+	HasNextPage githubv4.Boolean
+}
+
 type Repositories struct {
 	Nodes []struct {
 		NameWithOwner    githubv4.String
@@ -17,10 +22,7 @@ type Repositories struct {
 		URL            githubv4.URI
 		SSHURL         githubv4.String
 	}
-	PageInfo struct {
-		EndCursor   githubv4.String
-		HasNextPage githubv4.Boolean
-	}
+	PageInfo PageInfo
 }
 
 type Issues struct {
@@ -40,10 +42,7 @@ type Issues struct {
 			}
 		} `graphql:"assignees(first: $first)"`
 	}
-	PageInfo struct {
-		EndCursor   githubv4.String
-		HasNextPage githubv4.Boolean
-	}
+	PageInfo PageInfo
 }
 
 type AssignableUsers struct {
@@ -58,6 +57,7 @@ type Labels struct {
 		Description githubv4.String
 		Color       githubv4.String
 	}
+	PageInfo PageInfo
 }
 
 type Milestones struct {
@@ -66,10 +66,12 @@ type Milestones struct {
 		State       githubv4.String
 		Description githubv4.String
 	}
+	PageInfo PageInfo
 }
 
 type Projects struct {
 	Nodes []struct {
 		Name githubv4.String
 	}
+	PageInfo PageInfo
 }
