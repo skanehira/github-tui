@@ -24,7 +24,7 @@ func (ui *UI) Start() error {
 	view, viewUpdater := NewViewUI()
 	issueUI := NewIssueUI(ui.updater, viewUpdater)
 	labelUI := NewLabelsUI(ui.updater)
-	millestoneUI := NewMilestoneUI(ui.updater)
+	milestoneUI := NewMilestoneUI(ui.updater)
 	projectUI := NewProjectUI(ui.updater)
 	assigneesUI := NewAssignableUI(ui.updater)
 	grid := tview.NewGrid().
@@ -32,7 +32,7 @@ func (ui *UI) Start() error {
 		AddItem(view, 1, 0, 3, 2, 0, 0, true).
 		AddItem(assigneesUI, 1, 2, 2, 1, 0, 0, true).
 		AddItem(labelUI, 1, 3, 2, 1, 0, 0, true).
-		AddItem(millestoneUI, 3, 3, 1, 1, 0, 0, true).
+		AddItem(milestoneUI, 3, 3, 1, 1, 0, 0, true).
 		AddItem(projectUI, 3, 2, 1, 1, 0, 0, true)
 
 	ui.pages = tview.NewPages().

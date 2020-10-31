@@ -1,64 +1,50 @@
 package ui
 
 import (
-	"log"
-
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
 	"github.com/skanehira/ght/github"
 )
 
 type Milestone struct {
-	Title       string
-	Description string
+	Title string
 }
 
-type MilestoneUI struct {
-	updater func(f func())
-	*tview.Table
+func (m *Milestone) Key() string {
+	return m.Title
 }
 
-func NewMilestoneUI(updater func(f func())) *MilestoneUI {
-	ui := &MilestoneUI{
-		Table:   tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(0, 0),
-		updater: updater,
-	}
-	ui.SetBorder(true).SetTitle("millestone list").SetTitleAlign(tview.AlignLeft)
-	go ui.updateMilestoneList()
-	return ui
+func (m *Milestone) Fields() []string {
+	return []string{m.Title}
 }
 
-func (ui *MilestoneUI) updateMilestoneList() {
-	table := ui.Clear()
-	v := map[string]interface{}{
-		"owner":  githubv4.String(config.GitHub.Owner),
-		"name":   githubv4.String(config.GitHub.Repo),
-		"first":  githubv4.Int(100),
-		"cursor": (*githubv4.String)(nil),
-	}
-	resp, err := github.GetRepoMillestones(v)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	ui.updater(func() {
-		labels := make([]Milestone, len(resp.Nodes))
-
-		for i, m := range resp.Nodes {
-			title := string(m.Title)
-			description := string(m.Description)
-			labels[i] = Milestone{
-				Title:       title,
-				Description: description,
-			}
-
-			table.SetCell(i, 0, tview.NewTableCell(title).
-				SetTextColor(tcell.ColorPowderBlue).SetExpansion(1))
+func NewMilestoneUI(updater func(f func())) *SelectListUI {
+	getList := func(cursor *string) ([]ListData, github.PageInfo) {
+		v := map[string]interface{}{
+			"owner":  githubv4.String(config.GitHub.Owner),
+			"name":   githubv4.String(config.GitHub.Repo),
+			"first":  githubv4.Int(100),
+			"cursor": (*githubv4.String)(cursor),
+		}
+		resp, err := github.GetRepoMillestones(v)
+		if err != nil {
+			return nil, github.PageInfo{}
 		}
 
-		ui.ScrollToBeginning()
-	})
+		milestones := make([]ListData, len(resp.Nodes))
+		for i, m := range resp.Nodes {
+			milestones[i] = &Milestone{
+				Title: string(m.Title),
+			}
+		}
+
+		return milestones, resp.PageInfo
+	}
+
+	capture := func(event *tcell.EventKey) *tcell.EventKey {
+		return event
+	}
+
+	return NewSelectListUI("milestone list", updater, tcell.ColorGreen, getList, capture)
 }
