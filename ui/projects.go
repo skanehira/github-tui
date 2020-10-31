@@ -1,63 +1,49 @@
 package ui
 
 import (
-	"log"
-
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
 	"github.com/skanehira/ght/github"
 )
 
 type Project struct {
-	Name        string
-	Description string
-	Color       string
+	Name string
 }
 
-type ProjectUI struct {
-	updater func(f func())
-	*tview.Table
+func (p *Project) Key() string {
+	return p.Name
+}
+func (p *Project) Fields() []string {
+	return []string{p.Name}
 }
 
-func NewProjectUI(updater func(f func())) *ProjectUI {
-	ui := &ProjectUI{
-		Table:   tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(0, 0),
-		updater: updater,
-	}
-	ui.SetBorder(true).SetTitle("project list").SetTitleAlign(tview.AlignLeft)
-	go ui.updateProjectList()
-	return ui
-}
-
-func (ui *ProjectUI) updateProjectList() {
-	table := ui.Clear()
-	v := map[string]interface{}{
-		"owner":  githubv4.String(config.GitHub.Owner),
-		"name":   githubv4.String(config.GitHub.Repo),
-		"first":  githubv4.Int(100),
-		"cursor": (*githubv4.String)(nil),
-	}
-	resp, err := github.GetRepoProjects(v)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	ui.updater(func() {
-		labels := make([]Project, len(resp.Nodes))
-
-		for i, p := range resp.Nodes {
-			name := string(p.Name)
-			labels[i] = Project{
-				Name: name,
-			}
-
-			table.SetCell(i, 0, tview.NewTableCell(name).
-				SetTextColor(tcell.ColorSkyblue).SetExpansion(1))
+func NewProjectUI(updater func(f func())) *SelectListUI {
+	getList := func(cursor *string) ([]ListData, github.PageInfo) {
+		v := map[string]interface{}{
+			"owner":  githubv4.String(config.GitHub.Owner),
+			"name":   githubv4.String(config.GitHub.Repo),
+			"first":  githubv4.Int(100),
+			"cursor": (*githubv4.String)(cursor),
+		}
+		resp, err := github.GetRepoProjects(v)
+		if err != nil {
+			return nil, github.PageInfo{}
 		}
 
-		ui.ScrollToBeginning()
-	})
+		projects := make([]ListData, len(resp.Nodes))
+		for i, m := range resp.Nodes {
+			projects[i] = &Project{
+				Name: string(m.Name),
+			}
+		}
+
+		return projects, resp.PageInfo
+	}
+
+	capture := func(event *tcell.EventKey) *tcell.EventKey {
+		return event
+	}
+
+	return NewSelectListUI("project list", updater, tcell.ColorLightSalmon, getList, capture)
 }

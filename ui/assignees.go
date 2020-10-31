@@ -45,5 +45,5 @@ func NewAssignableUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("assibnable user list", updater, tcell.ColorGreen, getList, capture)
+	return NewSelectListUI("assibnable user list", updater, tcell.ColorBlue, getList, capture)
 }
