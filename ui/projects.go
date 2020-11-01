@@ -14,13 +14,14 @@ type Project struct {
 func (p *Project) Key() string {
 	return p.Name
 }
+
 func (p *Project) Fields() []Field {
 	return []Field{
 		{Text: p.Name, Color: tcell.ColorLightSalmon},
 	}
 }
 
-func NewProjectUI(updater func(f func())) *SelectListUI {
+func NewProjectUI() *SelectListUI {
 	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
@@ -44,8 +45,8 @@ func NewProjectUI(updater func(f func())) *SelectListUI {
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return event
+		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("project list", nil, updater, tcell.ColorLightSalmon, getList, capture, nil)
+	return NewSelectListUI("project list", nil, tcell.ColorLightSalmon, getList, capture, nil)
 }

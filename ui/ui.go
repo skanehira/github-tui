@@ -1,15 +1,31 @@
 package ui
 
-import "github.com/rivo/tview"
+import (
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
 
-type UI struct {
-	app     *tview.Application
-	pages   *tview.Pages
-	updater func(f func())
+var (
+	UI *ui
+)
+
+type Primitive interface {
+	focus()
+	blur()
+	tview.Primitive
 }
 
-func New() *UI {
-	ui := &UI{
+type ui struct {
+	app          *tview.Application
+	pages        *tview.Pages
+	current      int
+	primitives   []Primitive
+	primitiveLen int
+	updater      func(f func())
+}
+
+func New() *ui {
+	ui := &ui{
 		app: tview.NewApplication(),
 	}
 
@@ -17,16 +33,58 @@ func New() *UI {
 		go ui.app.QueueUpdateDraw(f)
 	}
 
+	UI = ui
+
 	return ui
 }
 
-func (ui *UI) Start() error {
+func (ui *ui) toNextUI() {
+	ui.primitives[ui.current].blur()
+	if ui.primitiveLen-1 > ui.current {
+		ui.current++
+	} else {
+		ui.current = 0
+	}
+	p := ui.primitives[ui.current]
+	p.focus()
+	ui.app.SetFocus(p)
+}
+
+func (ui *ui) toPrevUI() {
+	ui.primitives[ui.current].blur()
+	if ui.current == 0 {
+		ui.current = ui.primitiveLen - 1
+	} else {
+		ui.current--
+	}
+	p := ui.primitives[ui.current]
+	p.focus()
+	ui.app.SetFocus(p)
+}
+
+func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'l':
+		UI.toNextUI()
+	case 'h':
+		UI.toPrevUI()
+	}
+
+	return event
+}
+
+func (ui *ui) Start() error {
 	view, viewUpdater := NewViewUI()
-	issueUI := NewIssueUI(ui.updater, viewUpdater)
-	labelUI := NewLabelsUI(ui.updater)
-	milestoneUI := NewMilestoneUI(ui.updater)
-	projectUI := NewProjectUI(ui.updater)
-	assigneesUI := NewAssignableUI(ui.updater)
+	issueUI := NewIssueUI(viewUpdater)
+	labelUI := NewLabelsUI()
+	milestoneUI := NewMilestoneUI()
+	projectUI := NewProjectUI()
+	assigneesUI := NewAssignableUI()
+
+	ui.primitives = []Primitive{issueUI, view, assigneesUI, projectUI, labelUI, milestoneUI}
+	ui.primitiveLen = len(ui.primitives)
+	issueUI.focus()
+
 	grid := tview.NewGrid().
 		AddItem(issueUI, 0, 0, 1, 4, 0, 0, true).
 		AddItem(view, 1, 0, 3, 2, 0, 0, true).

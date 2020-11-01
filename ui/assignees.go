@@ -21,7 +21,7 @@ func (a *AssignableUser) Fields() []Field {
 	}
 }
 
-func NewAssignableUI(updater func(f func())) *SelectListUI {
+func NewAssignableUI() *SelectListUI {
 	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
@@ -44,8 +44,8 @@ func NewAssignableUI(updater func(f func())) *SelectListUI {
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return event
+		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("assibnable user list", nil, updater, tcell.ColorBlue, getList, capture, nil)
+	return NewSelectListUI("assibnable user list", nil, tcell.ColorBlue, getList, capture, nil)
 }

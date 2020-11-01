@@ -38,11 +38,10 @@ type SelectListUI struct {
 	list      []List
 	selected  map[string]struct{}
 	boxColor  tcell.Color
-	updater   func(func())
 	*tview.Table
 }
 
-func NewSelectListUI(title string, header []string, updater func(func()), textColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
+func NewSelectListUI(title string, header []string, textColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
 	ui := &SelectListUI{
 		hasNext:   true,
 		getList:   getList,
@@ -52,8 +51,7 @@ func NewSelectListUI(title string, header []string, updater func(func()), textCo
 		hasHeader: len(header) > 0,
 		selected:  make(map[string]struct{}),
 		boxColor:  textColor,
-		updater:   updater,
-		Table:     tview.NewTable().SetSelectable(true, false).Select(0, 0),
+		Table:     tview.NewTable().SetSelectable(false, false).Select(0, 0),
 	}
 
 	if len(header) > 0 {
@@ -77,7 +75,7 @@ func (ui *SelectListUI) GetList() {
 }
 
 func (ui *SelectListUI) UpdateList() {
-	ui.updater(func() {
+	UI.updater(func() {
 		ui.Clear()
 		for i, h := range ui.header {
 			ui.SetCell(0, i, &tview.TableCell{
@@ -166,4 +164,12 @@ func (ui *SelectListUI) toggleSelected(row int) {
 		ui.selected[data.Key()] = struct{}{}
 		ui.SetCell(row, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
 	}
+}
+
+func (ui *SelectListUI) focus() {
+	ui.SetSelectable(true, false)
+}
+
+func (ui *SelectListUI) blur() {
+	ui.SetSelectable(false, false)
 }

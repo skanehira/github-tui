@@ -21,7 +21,7 @@ func (m *Milestone) Fields() []Field {
 	}
 }
 
-func NewMilestoneUI(updater func(f func())) *SelectListUI {
+func NewMilestoneUI() *SelectListUI {
 	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
@@ -45,8 +45,8 @@ func NewMilestoneUI(updater func(f func())) *SelectListUI {
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return event
+		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("milestone list", nil, updater, tcell.ColorGreen, getList, capture, nil)
+	return NewSelectListUI("milestone list", nil, tcell.ColorGreen, getList, capture, nil)
 }

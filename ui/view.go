@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/charmbracelet/glamour"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -15,7 +16,7 @@ func NewViewUI() (*ViewUI, func(text string)) {
 	}
 
 	ui.SetBorder(true).SetTitle("view").SetTitleAlign(tview.AlignLeft)
-	ui.SetDynamicColors(true)
+	ui.SetDynamicColors(true).SetWordWrap(false)
 
 	viewUpdater := func(text string) {
 		out, err := glamour.Render(text, "dark")
@@ -25,5 +26,13 @@ func NewViewUI() (*ViewUI, func(text string)) {
 		ui.SetText(tview.TranslateANSI(out)).ScrollToBeginning()
 	}
 
+	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		return UI.Capture(event)
+	})
+
 	return ui, viewUpdater
 }
+
+func (v *ViewUI) focus() {}
+
+func (v *ViewUI) blur() {}

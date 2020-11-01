@@ -24,7 +24,7 @@ func (l *Label) Fields() []Field {
 	}
 }
 
-func NewLabelsUI(updater func(f func())) *SelectListUI {
+func NewLabelsUI() *SelectListUI {
 	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
@@ -51,8 +51,8 @@ func NewLabelsUI(updater func(f func())) *SelectListUI {
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return event
+		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("label list", nil, updater, tcell.ColorYellow, getList, capture, nil)
+	return NewSelectListUI("label list", nil, tcell.ColorYellow, getList, capture, nil)
 }

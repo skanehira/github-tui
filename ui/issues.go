@@ -43,7 +43,7 @@ func (i *Issue) Fields() []Field {
 	return f
 }
 
-func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *SelectListUI {
+func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 	getList := func(cursor *string) ([]List, github.PageInfo) {
 		v := map[string]interface{}{
 			"owner":  githubv4.String(config.GitHub.Owner),
@@ -84,7 +84,7 @@ func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *SelectLi
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return event
+		return UI.Capture(event)
 	}
 
 	header := []string{
@@ -98,16 +98,16 @@ func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *SelectLi
 	}
 
 	init := func(ui *SelectListUI) {
-		ui.updater(func() {
+		UI.updater(func() {
 			viewUpdater(ui.list[0].(*Issue).Body)
 		})
 	}
 
-	ui := NewSelectListUI("issue list", header, updater, tcell.ColorBlue, getList, capture, init)
+	ui := NewSelectListUI("issue list", header, tcell.ColorBlue, getList, capture, init)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
-			ui.updater(func() {
+			UI.updater(func() {
 				viewUpdater(ui.list[row-1].(*Issue).Body)
 			})
 		}
