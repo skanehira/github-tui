@@ -51,11 +51,11 @@ func NewSelectListUI(title string, header []string, textColor tcell.Color, getLi
 		hasHeader: len(header) > 0,
 		selected:  make(map[string]struct{}),
 		boxColor:  textColor,
-		Table:     tview.NewTable().SetSelectable(false, false).Select(0, 0),
+		Table:     tview.NewTable().SetSelectable(false, false),
 	}
 
 	if len(header) > 0 {
-		ui.SetFixed(1, 0)
+		ui.SetFixed(1, len(ui.header))
 	}
 	ui.SetBorder(true).SetTitle(title).SetTitleAlign(tview.AlignLeft)
 

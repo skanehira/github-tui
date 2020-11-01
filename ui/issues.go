@@ -3,7 +3,6 @@ package ui
 import (
 	"log"
 	"strconv"
-	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
@@ -34,10 +33,8 @@ func (i *Issue) Fields() []Field {
 	f := []Field{
 		{Text: i.Number, Color: tcell.ColorBlue},
 		{Text: i.State, Color: stateColor},
-		{Text: i.Title, Color: tcell.ColorWhite},
 		{Text: i.Author, Color: tcell.ColorYellow},
-		{Text: strings.Join(i.Labels, ","), Color: tcell.ColorAqua},
-		{Text: strings.Join(i.Assignees, ","), Color: tcell.ColorOlive},
+		{Text: i.Title, Color: tcell.ColorWhite},
 	}
 
 	return f
@@ -91,10 +88,8 @@ func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 		"",
 		"Number",
 		"State",
-		"Title",
 		"Author",
-		"Labels",
-		"Assignees",
+		"Title",
 	}
 
 	init := func(ui *SelectListUI) {
