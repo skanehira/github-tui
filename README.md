@@ -1,16 +1,25 @@
-# ght
-This is a TUI client for GitHub.
+# github-tui
+This is a TUI Client for GitHub.
 
 ## Features
-- list/create/close/open issue
-- list/create/close/merge pull requests
-- list/craete repositorires
+- issue
+  - list/create/close/open
+- pr
+  - list/create/close/merge
+- repository
+  - list/craete
 
 ## Usage
 
 ```sh
-$ ght repo {user}
-$ ght {user}
+# repository list
+$ ght repo owner
+
+# issue list
+$ ght issue owner/repo
+
+# pull request list
+$ ght pr owner/repo
 ```
 
 ## Installation
