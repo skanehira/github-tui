@@ -25,22 +25,26 @@ type Repositories struct {
 	PageInfo PageInfo
 }
 
-type Issues struct {
-	Nodes []struct {
-		Number githubv4.Int
-		Body   githubv4.String
-		State  githubv4.String
-		Author struct {
+type Issue struct {
+	Number githubv4.Int
+	Body   githubv4.String
+	State  githubv4.String
+	Author struct {
+		Login githubv4.String
+	}
+	Title     githubv4.String
+	URL       githubv4.URI
+	Labels    Labels `graphql:"labels(first: $first)"`
+	Assignees struct {
+		Nodes []struct {
 			Login githubv4.String
 		}
-		Title     githubv4.String
-		URL       githubv4.URI
-		Labels    Labels `graphql:"labels(first: $first)"`
-		Assignees struct {
-			Nodes []struct {
-				Login githubv4.String
-			}
-		} `graphql:"assignees(first: $first)"`
+	} `graphql:"assignees(first: $first)"`
+}
+
+type Issues struct {
+	Nodes []struct {
+		Issue Issue `graphql:"... on Issue"`
 	}
 	PageInfo PageInfo
 }

@@ -1,8 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
@@ -40,12 +42,29 @@ func (i *Issue) Fields() []Field {
 	return f
 }
 
+var (
+	IssueUI *SelectListUI
+)
+
 func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
+	queries := []string{
+		fmt.Sprintf("repo:%s/%s", config.GitHub.Owner, config.GitHub.Repo),
+		"is:issue",
+	}
+
 	getList := func(cursor *string) ([]List, github.PageInfo) {
+		queries := queries
+		for _, q := range strings.Split(filterQuery, " ") {
+			if strings.Contains(q, "type:pr") || strings.Contains(q, "is:pr") {
+				continue
+			}
+			queries = append(queries, q)
+		}
+		query := strings.Join(queries, " ")
+
 		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
+			"query":  githubv4.String(query),
+			"first":  githubv4.Int(30),
 			"cursor": (*githubv4.String)(cursor),
 		}
 		resp, err := github.GetIssue(v)
@@ -57,21 +76,21 @@ func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 		issues := make([]List, len(resp.Nodes))
 		for i, node := range resp.Nodes {
 			issue := &Issue{
-				Number: strconv.Itoa(int(node.Number)),
-				State:  string(node.State),
-				Author: string(node.Author.Login),
-				Title:  string(node.Title),
-				Body:   string(node.Body),
+				Number: strconv.Itoa(int(node.Issue.Number)),
+				State:  string(node.Issue.State),
+				Author: string(node.Issue.Author.Login),
+				Title:  string(node.Issue.Title),
+				Body:   string(node.Issue.Body),
 			}
 
-			labels := make([]string, len(node.Labels.Nodes))
-			for i, l := range node.Labels.Nodes {
+			labels := make([]string, len(node.Issue.Labels.Nodes))
+			for i, l := range node.Issue.Labels.Nodes {
 				labels[i] = string(l.Name)
 			}
 			issue.Labels = labels
 
-			assignees := make([]string, len(node.Assignees.Nodes))
-			for i, a := range node.Assignees.Nodes {
+			assignees := make([]string, len(node.Issue.Assignees.Nodes))
+			for i, a := range node.Issue.Assignees.Nodes {
 				assignees[i] = string(a.Login)
 			}
 			issue.Assignees = assignees
@@ -94,7 +113,9 @@ func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 
 	init := func(ui *SelectListUI) {
 		UI.updater(func() {
-			viewUpdater(ui.list[0].(*Issue).Body)
+			if len(ui.list) > 0 {
+				viewUpdater(ui.list[0].(*Issue).Body)
+			}
 		})
 	}
 
@@ -107,5 +128,7 @@ func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 			})
 		}
 	})
+
+	IssueUI = ui
 	return ui
 }

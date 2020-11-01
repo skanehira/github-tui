@@ -65,6 +65,16 @@ func NewSelectListUI(title string, header []string, boxColor tcell.Color, getLis
 }
 
 func (ui *SelectListUI) GetList() {
+	list, pageInfo := ui.getList(nil)
+	ui.hasNext = bool(pageInfo.HasNextPage)
+	cursor := string(pageInfo.EndCursor)
+	ui.list = list
+	ui.cursor = &cursor
+	ui.Select(0, 0)
+	ui.UpdateList()
+}
+
+func (ui *SelectListUI) FetchList() {
 	if ui.hasNext {
 		list, pageInfo := ui.getList(ui.cursor)
 		ui.hasNext = bool(pageInfo.HasNextPage)
@@ -140,7 +150,7 @@ func (ui *SelectListUI) Init() {
 
 		switch event.Rune() {
 		case 'G':
-			go ui.GetList()
+			go ui.FetchList()
 		}
 
 		return ui.capture(event)

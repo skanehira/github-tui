@@ -63,10 +63,10 @@ func (ui *ui) toPrevUI() {
 }
 
 func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
-	switch event.Rune() {
-	case 'l':
+	switch event.Key() {
+	case tcell.KeyCtrlN:
 		UI.toNextUI()
-	case 'h':
+	case tcell.KeyCtrlP:
 		UI.toPrevUI()
 	}
 
@@ -80,23 +80,28 @@ func (ui *ui) Start() error {
 	milestoneUI := NewMilestoneUI()
 	projectUI := NewProjectUI()
 	assigneesUI := NewAssignableUI()
+	filterUI := NewFilterUI()
 
-	ui.primitives = []Primitive{issueUI, view, assigneesUI, projectUI, labelUI, milestoneUI}
+	ui.primitives = []Primitive{filterUI, issueUI, view, assigneesUI, projectUI, labelUI, milestoneUI}
 	ui.primitiveLen = len(ui.primitives)
-	issueUI.focus()
 
-	grid := tview.NewGrid().
-		AddItem(issueUI, 0, 0, 1, 4, 0, 0, true).
-		AddItem(view, 1, 0, 3, 2, 0, 0, true).
-		AddItem(assigneesUI, 1, 2, 2, 1, 0, 0, true).
-		AddItem(labelUI, 1, 3, 2, 1, 0, 0, true).
-		AddItem(milestoneUI, 3, 3, 1, 1, 0, 0, true).
-		AddItem(projectUI, 3, 2, 1, 1, 0, 0, true)
+	grid := tview.NewGrid().SetRows(3).
+		AddItem(filterUI, 0, 0, 1, 4, 0, 0, true).
+		AddItem(issueUI, 1, 0, 1, 4, 0, 0, true).
+		AddItem(view, 2, 0, 3, 2, 0, 0, true).
+		AddItem(assigneesUI, 2, 2, 2, 1, 0, 0, true).
+		AddItem(labelUI, 2, 3, 2, 1, 0, 0, true).
+		AddItem(milestoneUI, 4, 3, 1, 1, 0, 0, true).
+		AddItem(projectUI, 4, 2, 1, 1, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
 	ui.app.SetRoot(ui.pages, true)
+
+	ui.current = 1
+	ui.app.SetFocus(issueUI)
+	issueUI.focus()
 
 	if err := ui.app.Run(); err != nil {
 		ui.app.Stop()

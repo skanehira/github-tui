@@ -32,14 +32,17 @@ func GetRepos(variables map[string]interface{}) (*Repositories, error) {
 
 func GetIssue(variables map[string]interface{}) (*Issues, error) {
 	var q struct {
-		Repository struct {
-			Issues `graphql:"issues(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC})"`
-		} `graphql:"repository(name: $name, owner: $owner)"`
+		Search Issues `graphql:"search(query: $query, type: ISSUE, first: $first, after: $cursor)"`
 	}
 	if err := client.Query(context.Background(), &q, variables); err != nil {
 		return nil, err
 	}
-	return &q.Repository.Issues, nil
+
+	issues := &Issues{
+		Nodes:    q.Search.Nodes,
+		PageInfo: q.Search.PageInfo,
+	}
+	return issues, nil
 }
 
 func GetRepoLabels(variables map[string]interface{}) (*Labels, error) {
