@@ -41,7 +41,7 @@ type SelectListUI struct {
 	*tview.Table
 }
 
-func NewSelectListUI(title string, header []string, textColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
+func NewSelectListUI(title string, header []string, boxColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
 	ui := &SelectListUI{
 		hasNext:   true,
 		getList:   getList,
@@ -50,7 +50,7 @@ func NewSelectListUI(title string, header []string, textColor tcell.Color, getLi
 		header:    header,
 		hasHeader: len(header) > 0,
 		selected:  make(map[string]struct{}),
-		boxColor:  textColor,
+		boxColor:  boxColor,
 		Table:     tview.NewTable().SetSelectable(false, false),
 	}
 
@@ -58,6 +58,7 @@ func NewSelectListUI(title string, header []string, textColor tcell.Color, getLi
 		ui.SetFixed(1, len(ui.header))
 	}
 	ui.SetBorder(true).SetTitle(title).SetTitleAlign(tview.AlignLeft)
+	ui.SetBorderColor(boxColor)
 
 	go ui.Init()
 	return ui

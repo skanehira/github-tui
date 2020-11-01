@@ -17,7 +17,7 @@ func (a *AssignableUser) Key() string {
 
 func (a *AssignableUser) Fields() []Field {
 	return []Field{
-		{Text: a.Login, Color: tcell.ColorBlue},
+		{Text: a.Login, Color: tcell.ColorFuchsia},
 	}
 }
 
@@ -47,5 +47,5 @@ func NewAssignableUI() *SelectListUI {
 		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("assibnable user list", nil, tcell.ColorBlue, getList, capture, nil)
+	return NewSelectListUI("assibnable user list", nil, tcell.ColorFuchsia, getList, capture, nil)
 }

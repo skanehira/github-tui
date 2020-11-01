@@ -20,7 +20,7 @@ func (l *Label) Key() string {
 
 func (l *Label) Fields() []Field {
 	return []Field{
-		{Text: l.Name, Color: tcell.ColorYellow},
+		{Text: l.Name, Color: tcell.ColorLightYellow},
 	}
 }
 
@@ -54,5 +54,5 @@ func NewLabelsUI() *SelectListUI {
 		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("label list", nil, tcell.ColorYellow, getList, capture, nil)
+	return NewSelectListUI("label list", nil, tcell.ColorLightYellow, getList, capture, nil)
 }
