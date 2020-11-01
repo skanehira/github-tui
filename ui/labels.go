@@ -54,5 +54,5 @@ func NewLabelsUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("label list", nil, updater, tcell.ColorYellow, getList, capture)
+	return NewSelectListUI("label list", nil, updater, tcell.ColorYellow, getList, capture, nil)
 }

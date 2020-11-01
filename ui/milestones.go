@@ -48,5 +48,5 @@ func NewMilestoneUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("milestone list", nil, updater, tcell.ColorGreen, getList, capture)
+	return NewSelectListUI("milestone list", nil, updater, tcell.ColorGreen, getList, capture, nil)
 }

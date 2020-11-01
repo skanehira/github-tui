@@ -1,19 +1,18 @@
 package ui
 
 import (
-	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
 	"github.com/skanehira/ght/github"
 )
 
 type Issue struct {
-	Number    int
+	Number    string
 	State     string
 	Title     string
 	Body      string
@@ -22,65 +21,46 @@ type Issue struct {
 	Assignees []string
 }
 
-type IssueUI struct {
-	issues      []Issue
-	updater     func(f func())
-	viewUpdater func(text string)
-	*tview.Table
+func (i *Issue) Key() string {
+	return i.Number
 }
 
-func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *IssueUI {
-	ui := &IssueUI{
-		Table:       tview.NewTable().SetSelectable(true, false).Select(0, 0).SetFixed(1, 1),
-		updater:     updater,
-		viewUpdater: viewUpdater,
+func (i *Issue) Fields() []Field {
+	stateColor := tcell.ColorGreen
+	if i.State == "CLOSED" {
+		stateColor = tcell.ColorRed
 	}
 
-	ui.SetBorder(true).SetTitle("issue list").SetTitleAlign(tview.AlignLeft)
-	go ui.updateIssueList()
-	return ui
+	f := []Field{
+		{Text: i.Number, Color: tcell.ColorBlue},
+		{Text: i.State, Color: stateColor},
+		{Text: i.Title, Color: tcell.ColorWhite},
+		{Text: i.Author, Color: tcell.ColorYellow},
+		{Text: strings.Join(i.Labels, ","), Color: tcell.ColorAqua},
+		{Text: strings.Join(i.Assignees, ","), Color: tcell.ColorOlive},
+	}
+
+	return f
 }
 
-func (ui *IssueUI) updateIssueList() {
-	table := ui.Clear()
+func NewIssueUI(updater func(f func()), viewUpdater func(text string)) *SelectListUI {
+	getList := func(cursor *string) ([]List, github.PageInfo) {
+		v := map[string]interface{}{
+			"owner":  githubv4.String(config.GitHub.Owner),
+			"name":   githubv4.String(config.GitHub.Repo),
+			"first":  githubv4.Int(100),
+			"cursor": (*githubv4.String)(cursor),
+		}
+		resp, err := github.GetIssue(v)
+		if err != nil {
+			log.Println(err)
+			return nil, github.PageInfo{}
+		}
 
-	headers := []string{
-		"Number",
-		"State",
-		"Title",
-		"Author",
-		"Labels",
-		"Assignees",
-	}
-
-	for i, header := range headers {
-		table.SetCell(0, i, &tview.TableCell{
-			Text:            header,
-			NotSelectable:   true,
-			Align:           tview.AlignLeft,
-			Color:           tcell.ColorWhite,
-			BackgroundColor: tcell.ColorDefault,
-			Attributes:      tcell.AttrBold,
-		})
-	}
-
-	v := map[string]interface{}{
-		"owner":  githubv4.String(config.GitHub.Owner),
-		"name":   githubv4.String(config.GitHub.Repo),
-		"first":  githubv4.Int(50),
-		"cursor": (*githubv4.String)(nil),
-	}
-	resp, err := github.GetIssue(v)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	ui.updater(func() {
-		ui.issues = make([]Issue, len(resp.Nodes))
+		issues := make([]List, len(resp.Nodes))
 		for i, node := range resp.Nodes {
-			issue := Issue{
-				Number: int(node.Number),
+			issue := &Issue{
+				Number: strconv.Itoa(int(node.Number)),
 				State:  string(node.State),
 				Author: string(node.Author.Login),
 				Title:  string(node.Title),
@@ -98,46 +78,39 @@ func (ui *IssueUI) updateIssueList() {
 				assignees[i] = string(a.Login)
 			}
 			issue.Assignees = assignees
-
-			ui.issues[i] = issue
+			issues[i] = issue
 		}
+		return issues, resp.PageInfo
+	}
 
-		for i, issue := range ui.issues {
-			table.SetCell(i+1, 0, tview.NewTableCell(fmt.Sprintf("#%d", issue.Number)).
-				SetTextColor(tcell.ColorBlue))
+	capture := func(event *tcell.EventKey) *tcell.EventKey {
+		return event
+	}
 
-			cell := tview.NewTableCell(issue.State)
-			if issue.State == "OPEN" {
-				cell.SetTextColor(tcell.ColorGreen)
-			} else {
-				cell.SetTextColor(tcell.ColorRed)
-			}
-			table.SetCell(i+1, 1, cell)
+	header := []string{
+		"",
+		"Number",
+		"State",
+		"Title",
+		"Author",
+		"Labels",
+		"Assignees",
+	}
 
-			table.SetCell(i+1, 2, tview.NewTableCell(issue.Title).
-				SetTextColor(tcell.ColorWhite).SetExpansion(1))
+	init := func(ui *SelectListUI) {
+		ui.updater(func() {
+			viewUpdater(ui.list[0].(*Issue).Body)
+		})
+	}
 
-			table.SetCell(i+1, 3, tview.NewTableCell(issue.Author).
-				SetTextColor(tcell.ColorYellow))
-
-			table.SetCell(i+1, 4, tview.NewTableCell(strings.Join(issue.Labels, ",")).
-				SetTextColor(tcell.ColorAqua))
-
-			table.SetCell(i+1, 5, tview.NewTableCell(strings.Join(issue.Assignees, ",")).
-				SetTextColor(tcell.ColorOlive))
-		}
-
-		ui.ScrollToBeginning()
-		if len(ui.issues) > 0 {
-			ui.viewUpdater(ui.issues[0].Body)
-		}
-	})
+	ui := NewSelectListUI("issue list", header, updater, tcell.ColorBlue, getList, capture, init)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
 			ui.updater(func() {
-				ui.viewUpdater(ui.issues[row-1].Body)
+				viewUpdater(ui.list[row-1].(*Issue).Body)
 			})
 		}
 	})
+	return ui
 }

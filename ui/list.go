@@ -19,6 +19,7 @@ type Field struct {
 type (
 	GetListFunc func(cursor *string) ([]List, github.PageInfo)
 	CaptureFunc func(event *tcell.EventKey) *tcell.EventKey
+	InitFunc    func(ui *SelectListUI)
 )
 
 type SelectListUI struct {
@@ -26,7 +27,9 @@ type SelectListUI struct {
 	hasNext   bool
 	getList   GetListFunc
 	capture   CaptureFunc
+	init      InitFunc
 	header    []string
+	hasHeader bool
 	list      []List
 	selected  map[string]struct{}
 	textColor tcell.Color
@@ -34,12 +37,14 @@ type SelectListUI struct {
 	*tview.Table
 }
 
-func NewSelectListUI(title string, header []string, updater func(func()), textColor tcell.Color, getList GetListFunc, capture CaptureFunc) *SelectListUI {
+func NewSelectListUI(title string, header []string, updater func(func()), textColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
 	ui := &SelectListUI{
 		hasNext:   true,
 		getList:   getList,
 		capture:   capture,
+		init:      init,
 		header:    header,
+		hasHeader: len(header) > 0,
 		selected:  make(map[string]struct{}),
 		textColor: textColor,
 		updater:   updater,
@@ -81,7 +86,7 @@ func (ui *SelectListUI) UpdateList() {
 		}
 
 		h := 0
-		if len(ui.header) > 0 {
+		if ui.hasHeader {
 			h++
 		}
 		for i, data := range ui.list {
@@ -94,6 +99,7 @@ func (ui *SelectListUI) UpdateList() {
 				ui.SetCell(i+h, j+1, tview.NewTableCell(f.Text).SetTextColor(f.Color))
 			}
 		}
+		ui.ScrollToBeginning()
 	})
 }
 
@@ -103,34 +109,51 @@ func (ui *SelectListUI) Init() {
 		switch event.Key() {
 		case tcell.KeyCtrlJ:
 			row, col := ui.GetSelection()
-			leng := len(ui.list)
-			if leng >= row+1 {
+			max := len(ui.list)
+			if ui.hasHeader {
+				max++
+			}
+			if row < max {
 				ui.toggleSelected(row)
 			}
-			if leng > row+1 {
+
+			if row+1 < max {
 				ui.Select(row+1, col)
 			}
 		case tcell.KeyCtrlK:
 			row, col := ui.GetSelection()
-			if row >= 0 {
+			min := 0
+			if ui.hasHeader {
+				min++
+			}
+			if row >= min {
 				ui.toggleSelected(row)
 			}
-			if row > 0 {
+			if row > min {
 				ui.Select(row-1, col)
 			}
 		}
 
 		switch event.Rune() {
 		case 'G':
-			ui.GetList()
+			go ui.GetList()
 		}
 
 		return ui.capture(event)
 	})
+
+	if ui.init != nil {
+		ui.init(ui)
+	}
 }
 
 func (ui *SelectListUI) toggleSelected(row int) {
-	data := ui.list[row]
+	var data List
+	if ui.hasHeader {
+		data = ui.list[row-1]
+	} else {
+		data = ui.list[row]
+	}
 	if _, ok := ui.selected[data.Key()]; ok {
 		delete(ui.selected, data.Key())
 		ui.SetCell(row, 0, tview.NewTableCell("◯").SetTextColor(ui.textColor))

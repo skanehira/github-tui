@@ -47,5 +47,5 @@ func NewProjectUI(updater func(f func())) *SelectListUI {
 		return event
 	}
 
-	return NewSelectListUI("project list", nil, updater, tcell.ColorLightSalmon, getList, capture)
+	return NewSelectListUI("project list", nil, updater, tcell.ColorLightSalmon, getList, capture, nil)
 }
