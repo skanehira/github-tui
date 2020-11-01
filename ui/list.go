@@ -6,6 +6,11 @@ import (
 	"github.com/skanehira/ght/github"
 )
 
+const (
+	unselected = "\u25ef"
+	selected   = "\u25c9"
+)
+
 type List interface {
 	Key() string
 	Fields() []Field
@@ -91,9 +96,9 @@ func (ui *SelectListUI) UpdateList() {
 		}
 		for i, data := range ui.list {
 			if _, ok := ui.selected[data.Key()]; ok {
-				ui.SetCell(i+h, 0, tview.NewTableCell("◉").SetTextColor(ui.boxColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
 			} else {
-				ui.SetCell(i+h, 0, tview.NewTableCell("◯").SetTextColor(ui.boxColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell(unselected).SetTextColor(ui.boxColor))
 			}
 			for j, f := range data.Fields() {
 				ui.SetCell(i+h, j+1, tview.NewTableCell(f.Text).SetTextColor(f.Color))
@@ -156,9 +161,9 @@ func (ui *SelectListUI) toggleSelected(row int) {
 	}
 	if _, ok := ui.selected[data.Key()]; ok {
 		delete(ui.selected, data.Key())
-		ui.SetCell(row, 0, tview.NewTableCell("◯").SetTextColor(ui.boxColor))
+		ui.SetCell(row, 0, tview.NewTableCell(unselected).SetTextColor(ui.boxColor))
 	} else {
 		ui.selected[data.Key()] = struct{}{}
-		ui.SetCell(row, 0, tview.NewTableCell("◉").SetTextColor(ui.boxColor))
+		ui.SetCell(row, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
 	}
 }
