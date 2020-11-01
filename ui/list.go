@@ -32,7 +32,7 @@ type SelectListUI struct {
 	hasHeader bool
 	list      []List
 	selected  map[string]struct{}
-	textColor tcell.Color
+	boxColor  tcell.Color
 	updater   func(func())
 	*tview.Table
 }
@@ -46,7 +46,7 @@ func NewSelectListUI(title string, header []string, updater func(func()), textCo
 		header:    header,
 		hasHeader: len(header) > 0,
 		selected:  make(map[string]struct{}),
-		textColor: textColor,
+		boxColor:  textColor,
 		updater:   updater,
 		Table:     tview.NewTable().SetSelectable(true, false).Select(0, 0),
 	}
@@ -91,9 +91,9 @@ func (ui *SelectListUI) UpdateList() {
 		}
 		for i, data := range ui.list {
 			if _, ok := ui.selected[data.Key()]; ok {
-				ui.SetCell(i+h, 0, tview.NewTableCell("◉").SetTextColor(ui.textColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell("◉").SetTextColor(ui.boxColor))
 			} else {
-				ui.SetCell(i+h, 0, tview.NewTableCell("◯").SetTextColor(ui.textColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell("◯").SetTextColor(ui.boxColor))
 			}
 			for j, f := range data.Fields() {
 				ui.SetCell(i+h, j+1, tview.NewTableCell(f.Text).SetTextColor(f.Color))
@@ -156,9 +156,9 @@ func (ui *SelectListUI) toggleSelected(row int) {
 	}
 	if _, ok := ui.selected[data.Key()]; ok {
 		delete(ui.selected, data.Key())
-		ui.SetCell(row, 0, tview.NewTableCell("◯").SetTextColor(ui.textColor))
+		ui.SetCell(row, 0, tview.NewTableCell("◯").SetTextColor(ui.boxColor))
 	} else {
 		ui.selected[data.Key()] = struct{}{}
-		ui.SetCell(row, 0, tview.NewTableCell("◉").SetTextColor(ui.textColor))
+		ui.SetCell(row, 0, tview.NewTableCell("◉").SetTextColor(ui.boxColor))
 	}
 }
