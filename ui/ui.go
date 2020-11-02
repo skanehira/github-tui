@@ -21,7 +21,7 @@ type ui struct {
 	current      int
 	primitives   []Primitive
 	primitiveLen int
-	updater      func(f func())
+	updater      chan func()
 }
 
 func New() *ui {
@@ -29,9 +29,7 @@ func New() *ui {
 		app: tview.NewApplication(),
 	}
 
-	ui.updater = func(f func()) {
-		go ui.app.QueueUpdateDraw(f)
-	}
+	ui.updater = make(chan func(), 100)
 
 	UI = ui
 
@@ -74,8 +72,8 @@ func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
 }
 
 func (ui *ui) Start() error {
-	view, viewUpdater := NewViewUI()
-	issueUI := NewIssueUI(viewUpdater)
+	view := NewViewUI()
+	issueUI := NewIssueUI()
 	labelUI := NewLabelsUI()
 	milestoneUI := NewMilestoneUI()
 	projectUI := NewProjectUI()
@@ -102,6 +100,12 @@ func (ui *ui) Start() error {
 	ui.current = 1
 	ui.app.SetFocus(issueUI)
 	issueUI.focus()
+
+	go func() {
+		for f := range UI.updater {
+			go ui.app.QueueUpdateDraw(f)
+		}
+	}()
 
 	if err := ui.app.Run(); err != nil {
 		ui.app.Stop()

@@ -6,33 +6,38 @@ import (
 	"github.com/rivo/tview"
 )
 
-type ViewUI struct {
+var ViewUI *viewUI
+
+type viewUI struct {
 	*tview.TextView
 }
 
-func NewViewUI() (*ViewUI, func(text string)) {
-	ui := &ViewUI{
+func NewViewUI() *viewUI {
+	ui := &viewUI{
 		TextView: tview.NewTextView(),
 	}
 
 	ui.SetBorder(true).SetTitle("view").SetTitleAlign(tview.AlignLeft)
 	ui.SetDynamicColors(true).SetWordWrap(false)
 
-	viewUpdater := func(text string) {
-		out, err := glamour.Render(text, "dark")
-		if err != nil {
-			out = err.Error()
-		}
-		ui.SetText(tview.TranslateANSI(out)).ScrollToBeginning()
-	}
-
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		return UI.Capture(event)
 	})
 
-	return ui, viewUpdater
+	ViewUI = ui
+	return ui
 }
 
-func (v *ViewUI) focus() {}
+func viewUpdater(text string) {
+	UI.updater <- func() {
+		out, err := glamour.Render(text, "dark")
+		if err != nil {
+			out = err.Error()
+		}
+		ViewUI.SetText(tview.TranslateANSI(out)).ScrollToBeginning()
+	}
+}
 
-func (v *ViewUI) blur() {}
+func (v *viewUI) focus() {}
+
+func (v *viewUI) blur() {}

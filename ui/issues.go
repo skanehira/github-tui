@@ -46,7 +46,7 @@ var (
 	IssueUI *SelectListUI
 )
 
-func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
+func NewIssueUI() *SelectListUI {
 	queries := []string{
 		fmt.Sprintf("repo:%s/%s", config.GitHub.Owner, config.GitHub.Repo),
 		"is:issue",
@@ -112,20 +112,18 @@ func NewIssueUI(viewUpdater func(text string)) *SelectListUI {
 	}
 
 	init := func(ui *SelectListUI) {
-		UI.updater(func() {
-			if len(ui.list) > 0 {
-				viewUpdater(ui.list[0].(*Issue).Body)
-			}
-		})
+		if len(ui.list) > 0 {
+			viewUpdater(ui.list[0].(*Issue).Body)
+		}
 	}
 
 	ui := NewSelectListUI("issue list", header, tcell.ColorBlue, getList, capture, init)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
-			UI.updater(func() {
+			UI.updater <- func() {
 				viewUpdater(ui.list[row-1].(*Issue).Body)
-			})
+			}
 		}
 	})
 

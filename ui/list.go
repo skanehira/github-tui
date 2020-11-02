@@ -86,7 +86,7 @@ func (ui *SelectListUI) FetchList() {
 }
 
 func (ui *SelectListUI) UpdateList() {
-	UI.updater(func() {
+	UI.updater <- func() {
 		ui.Clear()
 		for i, h := range ui.header {
 			ui.SetCell(0, i, &tview.TableCell{
@@ -114,7 +114,7 @@ func (ui *SelectListUI) UpdateList() {
 			}
 		}
 		ui.ScrollToBeginning()
-	})
+	}
 }
 
 func (ui *SelectListUI) Init() {
