@@ -22,7 +22,7 @@ func NewFilterUI() *FilterUI {
 		switch event.Key() {
 		case tcell.KeyEnter:
 			filterQuery = ui.GetFormItem(0).(*tview.InputField).GetText()
-			IssueUI.GetList()
+			go IssueUI.GetList()
 		}
 		return UI.Capture(event)
 	})
