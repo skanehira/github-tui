@@ -15,7 +15,7 @@ type FilterUI struct {
 
 func NewFilterUI() *FilterUI {
 	ui := &FilterUI{
-		Form: tview.NewForm().AddInputField("filter", "", 100, nil, nil),
+		Form: tview.NewForm().AddInputField("Filters", "", 100, nil, nil),
 	}
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {

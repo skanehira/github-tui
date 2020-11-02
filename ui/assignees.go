@@ -47,5 +47,5 @@ func NewAssignableUI() *SelectListUI {
 		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("assibnable user list", nil, tcell.ColorFuchsia, getList, capture, nil)
+	return NewSelectListUI("assignable user list", nil, tcell.ColorFuchsia, getList, capture, nil)
 }
