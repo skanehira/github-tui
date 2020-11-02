@@ -140,8 +140,8 @@ func (ui *SelectListUI) Init() {
 			if ui.hasHeader {
 				min++
 			}
-			if row >= min {
-				ui.toggleSelected(row)
+			if row > min {
+				ui.toggleSelected(row - 1)
 			}
 			if row > min {
 				ui.Select(row-1, col)
