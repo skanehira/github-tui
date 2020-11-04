@@ -121,9 +121,7 @@ func NewIssueUI() *SelectListUI {
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
-			UI.updater <- func() {
-				viewUpdater(ui.list[row-1].(*Issue).Body)
-			}
+			viewUpdater(ui.list[row-1].(*Issue).Body)
 		}
 	})
 
