@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/pkg/browser"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
 	"github.com/skanehira/ght/github"
@@ -107,7 +106,17 @@ func NewIssueUI() *SelectListUI {
 		case tcell.KeyCtrlO:
 			for _, s := range IssueUI.selected {
 				issue := s.(*Issue)
-				browser.OpenURL(issue.URL)
+				if err := OpenBrowser(issue.URL); err != nil {
+					log.Println(err)
+				}
+			}
+			if len(IssueUI.selected) == 0 {
+				data := IssueUI.GetSelect()
+				if data != nil {
+					if err := OpenBrowser(data.(*Issue).URL); err != nil {
+						log.Println(err)
+					}
+				}
 			}
 		}
 		return UI.Capture(event)

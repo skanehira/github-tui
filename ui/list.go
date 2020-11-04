@@ -177,6 +177,17 @@ func (ui *SelectListUI) toggleSelected(row int) {
 	}
 }
 
+func (ui *SelectListUI) GetSelect() List {
+	row, _ := ui.GetSelection()
+	if len(ui.list) > row {
+		if ui.hasHeader {
+			row = row - 1
+		}
+		return ui.list[row]
+	}
+	return nil
+}
+
 func (ui *SelectListUI) focus() {
 	ui.SetSelectable(true, false)
 }
