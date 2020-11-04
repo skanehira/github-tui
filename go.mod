@@ -6,6 +6,7 @@ require (
 	github.com/charmbracelet/glamour v0.2.0
 	github.com/gdamore/tcell/v2 v2.0.1-0.20201017141208-acf90d56d591
 	github.com/goccy/go-yaml v1.8.3
+	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/rivo/tview v0.0.0-20201018122409-d551c850a743
 	github.com/shurcooL/githubv4 v0.0.0-20200928013246-d292edc3691b
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect

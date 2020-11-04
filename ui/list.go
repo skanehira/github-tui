@@ -36,7 +36,7 @@ type SelectListUI struct {
 	header    []string
 	hasHeader bool
 	list      []List
-	selected  map[string]struct{}
+	selected  map[string]interface{}
 	boxColor  tcell.Color
 	*tview.Table
 }
@@ -49,7 +49,7 @@ func NewSelectListUI(title string, header []string, boxColor tcell.Color, getLis
 		init:      init,
 		header:    header,
 		hasHeader: len(header) > 0,
-		selected:  make(map[string]struct{}),
+		selected:  make(map[string]interface{}),
 		boxColor:  boxColor,
 		Table:     tview.NewTable().SetSelectable(false, false),
 	}
@@ -172,7 +172,7 @@ func (ui *SelectListUI) toggleSelected(row int) {
 		delete(ui.selected, data.Key())
 		ui.SetCell(row, 0, tview.NewTableCell(unselected).SetTextColor(ui.boxColor))
 	} else {
-		ui.selected[data.Key()] = struct{}{}
+		ui.selected[data.Key()] = data
 		ui.SetCell(row, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
 	}
 }

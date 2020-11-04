@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/pkg/browser"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
 	"github.com/skanehira/ght/github"
@@ -18,6 +19,7 @@ type Issue struct {
 	Title     string
 	Body      string
 	Author    string
+	URL       string
 	Labels    []string
 	Assignees []string
 }
@@ -79,6 +81,7 @@ func NewIssueUI() *SelectListUI {
 				Number: strconv.Itoa(int(node.Issue.Number)),
 				State:  string(node.Issue.State),
 				Author: string(node.Issue.Author.Login),
+				URL:    node.Issue.URL.String(),
 				Title:  string(node.Issue.Title),
 				Body:   string(node.Issue.Body),
 			}
@@ -100,6 +103,13 @@ func NewIssueUI() *SelectListUI {
 	}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlO:
+			for _, s := range IssueUI.selected {
+				issue := s.(*Issue)
+				browser.OpenURL(issue.URL)
+			}
+		}
 		return UI.Capture(event)
 	}
 
