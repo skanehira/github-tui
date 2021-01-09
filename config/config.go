@@ -1,12 +1,10 @@
 package config
 
 import (
-	"flag"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/goccy/go-yaml"
 )
@@ -49,16 +47,6 @@ func Init() {
 
 	if conf.GitHub.Token == "" {
 		log.Fatal("github token is empty")
-	}
-
-	flag.Parse()
-	if len(flag.Args()) > 0 {
-		args := strings.Split(flag.Arg(0), "/")
-		if len(args) < 2 {
-			log.Fatal("invalid args")
-		}
-		conf.GitHub.Owner = args[0]
-		conf.GitHub.Repo = args[1]
 	}
 
 	App.File = configFile
