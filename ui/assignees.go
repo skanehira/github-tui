@@ -2,9 +2,10 @@ package ui
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/shurcooL/githubv4"
-	"github.com/skanehira/ght/config"
-	"github.com/skanehira/ght/github"
+)
+
+var (
+	AssigneesUI *SelectListUI
 )
 
 type AssignableUser struct {
@@ -22,30 +23,32 @@ func (a *AssignableUser) Fields() []Field {
 }
 
 func NewAssignableUI() *SelectListUI {
-	getList := func(cursor *string) ([]List, github.PageInfo) {
-		v := map[string]interface{}{
-			"owner":  githubv4.String(config.GitHub.Owner),
-			"name":   githubv4.String(config.GitHub.Repo),
-			"first":  githubv4.Int(100),
-			"cursor": (*githubv4.String)(cursor),
-		}
-		resp, err := github.GetRepoAssignableUsers(v)
-		if err != nil {
-			return nil, github.PageInfo{}
-		}
+	//getList := func(cursor *string) ([]List, github.PageInfo) {
+	//	v := map[string]interface{}{
+	//		"owner":  githubv4.String(config.GitHub.Owner),
+	//		"name":   githubv4.String(config.GitHub.Repo),
+	//		"first":  githubv4.Int(100),
+	//		"cursor": (*githubv4.String)(cursor),
+	//	}
+	//	resp, err := github.GetRepoAssignableUsers(v)
+	//	if err != nil {
+	//		return nil, github.PageInfo{}
+	//	}
 
-		assignees := make([]List, len(resp.Nodes))
-		for i, p := range resp.Nodes {
-			assignees[i] = &AssignableUser{
-				Login: string(p.Login),
-			}
-		}
-		return assignees, resp.PageInfo
-	}
+	//	assignees := make([]List, len(resp.Nodes))
+	//	for i, p := range resp.Nodes {
+	//		assignees[i] = &AssignableUser{
+	//			Login: string(p.Login),
+	//		}
+	//	}
+	//	return assignees, resp.PageInfo
+	//}
 
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
 		return UI.Capture(event)
 	}
 
-	return NewSelectListUI("assignable user list", nil, tcell.ColorFuchsia, getList, capture, nil)
+	ui := NewSelectListUI("assignable user list", nil, tcell.ColorFuchsia, nil, capture, nil)
+	AssigneesUI = ui
+	return ui
 }

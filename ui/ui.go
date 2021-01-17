@@ -72,32 +72,39 @@ func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
 }
 
 func (ui *ui) Start() error {
-	view := NewViewUI()
+	issuePreview := NewViewUI("issue preview")
+	commentPreview := NewViewUI("comment preview")
 	issueUI := NewIssueUI()
 	labelUI := NewLabelsUI()
 	milestoneUI := NewMilestoneUI()
 	projectUI := NewProjectUI()
 	assigneesUI := NewAssignableUI()
 	filterUI := NewFilterUI()
+	commentUI := NewCommentUI()
 
-	ui.primitives = []Primitive{filterUI, issueUI, view, assigneesUI, projectUI, labelUI, milestoneUI}
+	ui.primitives = []Primitive{filterUI, assigneesUI, labelUI, milestoneUI, projectUI, issueUI, issuePreview, commentUI, commentPreview}
 	ui.primitiveLen = len(ui.primitives)
 
+	// for readability
+	row, col, rowSpan, colSpan := 0, 0, 0, 0
+
 	grid := tview.NewGrid().SetRows(3).
-		AddItem(filterUI, 0, 0, 1, 4, 0, 0, true).
-		AddItem(issueUI, 1, 0, 1, 4, 0, 0, true).
-		AddItem(view, 2, 0, 3, 2, 0, 0, true).
-		AddItem(assigneesUI, 2, 2, 2, 1, 0, 0, true).
-		AddItem(labelUI, 2, 3, 2, 1, 0, 0, true).
-		AddItem(milestoneUI, 4, 3, 1, 1, 0, 0, true).
-		AddItem(projectUI, 4, 2, 1, 1, 0, 0, true)
+		AddItem(filterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
+		AddItem(issueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
+		AddItem(assigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(labelUI, row+2, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(milestoneUI, row+3, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(projectUI, row+4, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(commentUI, row+5, col, rowSpan+3, colSpan+4, 0, 0, true).
+		AddItem(issuePreview, row+1, col+4, rowSpan+4, colSpan+3, 0, 0, true).
+		AddItem(commentPreview, row+5, col+4, rowSpan+3, colSpan+3, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
 	ui.app.SetRoot(ui.pages, true)
 
-	ui.current = 1
+	ui.current = 5
 	ui.app.SetFocus(issueUI)
 	issueUI.focus()
 

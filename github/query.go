@@ -34,12 +34,34 @@ type Issue struct {
 	}
 	Title     githubv4.String
 	URL       githubv4.URI
-	Labels    Labels `graphql:"labels(first: $first)"`
+	Labels    Labels `graphql:"labels(first: 10)"`
 	Assignees struct {
 		Nodes []struct {
 			Login githubv4.String
 		}
-	} `graphql:"assignees(first: $first)"`
+	} `graphql:"assignees(first: 10)"`
+	ProjectCards struct {
+		Nodes []struct {
+			Project struct {
+				Name githubv4.String
+			}
+		}
+	} `graphql:"projectCards(first: 10)"`
+	Milestone struct {
+		ID    githubv4.String
+		Title githubv4.String
+	}
+	Comments struct {
+		Nodes []struct {
+			ID     githubv4.String
+			Author struct {
+				Login githubv4.String
+			}
+			UpdatedAt githubv4.DateTime
+			BodyText  githubv4.String
+			URL       githubv4.URI
+		}
+	} `graphql:"comments(first: 100)"`
 }
 
 type Issues struct {

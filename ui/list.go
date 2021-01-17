@@ -11,7 +11,7 @@ const (
 	selected   = "\u25c9"
 )
 
-type List interface {
+type Item interface {
 	Key() string
 	Fields() []Field
 }
@@ -22,7 +22,7 @@ type Field struct {
 }
 
 type (
-	GetListFunc func(cursor *string) ([]List, github.PageInfo)
+	GetListFunc func(cursor *string) ([]Item, *github.PageInfo)
 	CaptureFunc func(event *tcell.EventKey) *tcell.EventKey
 	InitFunc    func(ui *SelectListUI)
 )
@@ -35,7 +35,7 @@ type SelectListUI struct {
 	init      InitFunc
 	header    []string
 	hasHeader bool
-	list      []List
+	items     []Item
 	selected  map[string]interface{}
 	boxColor  tcell.Color
 	*tview.Table
@@ -65,13 +65,24 @@ func NewSelectListUI(title string, header []string, boxColor tcell.Color, getLis
 }
 
 func (ui *SelectListUI) GetList() {
-	list, pageInfo := ui.getList(nil)
-	ui.hasNext = bool(pageInfo.HasNextPage)
-	cursor := string(pageInfo.EndCursor)
-	ui.list = list
-	ui.cursor = &cursor
+	if ui.getList != nil {
+		list, pageInfo := ui.getList(nil)
+		if pageInfo != nil {
+			ui.hasNext = bool(pageInfo.HasNextPage)
+			cursor := string(pageInfo.EndCursor)
+			ui.items = list
+			ui.cursor = &cursor
+			ui.Select(0, 0)
+			ui.UpdateView()
+		}
+	}
+}
+
+func (ui *SelectListUI) SetList(list []Item) {
+	ui.items = list
+	ui.selected = make(map[string]interface{})
 	ui.Select(0, 0)
-	ui.UpdateList()
+	ui.UpdateView()
 }
 
 func (ui *SelectListUI) FetchList() {
@@ -79,13 +90,13 @@ func (ui *SelectListUI) FetchList() {
 		list, pageInfo := ui.getList(ui.cursor)
 		ui.hasNext = bool(pageInfo.HasNextPage)
 		cursor := string(pageInfo.EndCursor)
-		ui.list = append(ui.list, list...)
+		ui.items = append(ui.items, list...)
 		ui.cursor = &cursor
-		ui.UpdateList()
+		ui.UpdateView()
 	}
 }
 
-func (ui *SelectListUI) UpdateList() {
+func (ui *SelectListUI) UpdateView() {
 	UI.updater <- func() {
 		ui.Clear()
 		for i, h := range ui.header {
@@ -103,7 +114,7 @@ func (ui *SelectListUI) UpdateList() {
 		if ui.hasHeader {
 			h++
 		}
-		for i, data := range ui.list {
+		for i, data := range ui.items {
 			if _, ok := ui.selected[data.Key()]; ok {
 				ui.SetCell(i+h, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
 			} else {
@@ -123,7 +134,7 @@ func (ui *SelectListUI) Init() {
 		switch event.Key() {
 		case tcell.KeyCtrlJ:
 			row, col := ui.GetSelection()
-			max := len(ui.list)
+			max := len(ui.items)
 			if ui.hasHeader {
 				max++
 			}
@@ -162,11 +173,11 @@ func (ui *SelectListUI) Init() {
 }
 
 func (ui *SelectListUI) toggleSelected(row int) {
-	var data List
+	var data Item
 	if ui.hasHeader {
-		data = ui.list[row-1]
+		data = ui.items[row-1]
 	} else {
-		data = ui.list[row]
+		data = ui.items[row]
 	}
 	if _, ok := ui.selected[data.Key()]; ok {
 		delete(ui.selected, data.Key())
@@ -177,13 +188,13 @@ func (ui *SelectListUI) toggleSelected(row int) {
 	}
 }
 
-func (ui *SelectListUI) GetSelect() List {
+func (ui *SelectListUI) GetSelect() Item {
 	row, _ := ui.GetSelection()
-	if len(ui.list) > row {
+	if len(ui.items) > row {
 		if ui.hasHeader {
 			row = row - 1
 		}
-		return ui.list[row]
+		return ui.items[row]
 	}
 	return nil
 }
@@ -194,4 +205,9 @@ func (ui *SelectListUI) focus() {
 
 func (ui *SelectListUI) blur() {
 	ui.SetSelectable(false, false)
+}
+
+func (ui *SelectListUI) ClearView() {
+	ui.Clear()
+	ui.selected = make(map[string]interface{})
 }
