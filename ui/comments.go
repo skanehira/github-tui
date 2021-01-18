@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/skanehira/ght/utils"
 )
 
 var (
@@ -37,14 +38,14 @@ func NewCommentUI() *SelectListUI {
 		case tcell.KeyCtrlO:
 			for _, s := range CommentUI.selected {
 				comment := s.(*Comment)
-				if err := OpenBrowser(comment.URL); err != nil {
+				if err := utils.OpenBrowser(comment.URL); err != nil {
 					log.Println(err)
 				}
 			}
 			if len(CommentUI.selected) == 0 {
 				data := CommentUI.GetSelect()
 				if data != nil {
-					if err := OpenBrowser(data.(*Comment).URL); err != nil {
+					if err := utils.OpenBrowser(data.(*Comment).URL); err != nil {
 						log.Println(err)
 					}
 				}
