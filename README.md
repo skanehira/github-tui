@@ -6,27 +6,29 @@ This is a TUI Client for GitHub.
   - list/create/close/open
 - pr
   - list/create/close/merge
-- repository
-  - list/craete
+- actions
+  - list/log
+- file tree
+  - preview/open
+- project
+  - list/open/add/remove/move
+
 
 ## Usage
 
 ```sh
-# repository list
-$ ght repo owner
+# current repository
+$ ght
 
-# issue list
-$ ght issue owner/repo
-
-# pull request list
-$ ght pr owner/repo
+# specified repository
+$ ght owner/repo
 ```
 
 ## Installation
 
 ```sh
-$ git clone https://github.com/skanehira/ght
-$ cd ght && go install
+$ git clone https://github.com/skanehira/github-tui
+$ go install ./cmd/ght
 ```
 
 ## Author
