@@ -190,10 +190,10 @@ func (ui *SelectListUI) toggleSelected(row int) {
 
 func (ui *SelectListUI) GetSelect() Item {
 	row, _ := ui.GetSelection()
+	if ui.hasHeader {
+		row = row - 1
+	}
 	if len(ui.items) > row {
-		if ui.hasHeader {
-			row = row - 1
-		}
 		return ui.items[row]
 	}
 	return nil
