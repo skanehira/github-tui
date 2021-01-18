@@ -44,12 +44,14 @@ type Issue struct {
 		Nodes []struct {
 			Project struct {
 				Name githubv4.String
+				URL  githubv4.URI
 			}
 		}
 	} `graphql:"projectCards(first: 10)"`
 	Milestone struct {
 		ID    githubv4.String
 		Title githubv4.String
+		URL   githubv4.URI
 	}
 	Comments struct {
 		Nodes []struct {

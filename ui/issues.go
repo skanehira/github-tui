@@ -130,6 +130,7 @@ func NewIssueUI() *SelectListUI {
 				issue.MileStone = append(issue.MileStone, &Milestone{
 					ID:    string(node.Issue.Milestone.ID),
 					Title: string(node.Issue.Milestone.Title),
+					URL:   node.Issue.Milestone.URL.String(),
 				})
 			}
 
@@ -137,6 +138,7 @@ func NewIssueUI() *SelectListUI {
 			for i, card := range node.Issue.ProjectCards.Nodes {
 				projects[i] = &Project{
 					Name: string(card.Project.Name),
+					URL:  card.Project.URL.String(),
 				}
 			}
 			issue.Projects = projects
@@ -150,18 +152,21 @@ func NewIssueUI() *SelectListUI {
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlO:
-			for _, s := range IssueUI.selected {
-				issue := s.(*Issue)
-				if err := utils.OpenBrowser(issue.URL); err != nil {
-					log.Println(err)
-				}
-			}
+			var urls []string
 			if len(IssueUI.selected) == 0 {
 				data := IssueUI.GetSelect()
 				if data != nil {
-					if err := utils.OpenBrowser(data.(*Issue).URL); err != nil {
-						log.Println(err)
-					}
+					urls = append(urls, data.(*Issue).URL)
+				}
+			} else {
+				for _, s := range IssueUI.selected {
+					urls = append(urls, s.(*Issue).URL)
+				}
+			}
+
+			for _, url := range urls {
+				if err := utils.OpenBrowser(url); err != nil {
+					log.Println(err)
 				}
 			}
 		}
