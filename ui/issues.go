@@ -120,7 +120,7 @@ func NewIssueUI() *SelectListUI {
 					Author:    string(c.Author.Login),
 					UpdatedAt: c.UpdatedAt.Local().Format("2006/01/02 15:04:05"),
 					URL:       c.URL.String(),
-					Body:      string(c.BodyText),
+					Body:      string(c.Body),
 				}
 			}
 			issue.Comments = comments

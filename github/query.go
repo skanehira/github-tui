@@ -58,7 +58,7 @@ type Issue struct {
 				Login githubv4.String
 			}
 			UpdatedAt githubv4.DateTime
-			BodyText  githubv4.String
+			Body      githubv4.String
 			URL       githubv4.URI
 		}
 	} `graphql:"comments(first: 100)"`
