@@ -6,8 +6,10 @@ import (
 	"github.com/rivo/tview"
 )
 
-var IssueViewUI *viewUI
-var CommentViewUI *viewUI
+var (
+	IssueViewUI   *viewUI
+	CommentViewUI *viewUI
+)
 
 const (
 	IssuePreview   = "issue preview"
