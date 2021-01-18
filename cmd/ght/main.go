@@ -1,11 +1,9 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -50,9 +48,6 @@ func getRepoInfo() {
 func getOwnerRepo() (*Repo, error) {
 	if _, err := exec.LookPath("git"); err != nil {
 		return nil, err
-	}
-	if _, err := os.Stat(".git"); os.IsNotExist(err) {
-		return nil, errors.New("current directory is not git repository")
 	}
 	cmd := exec.Command("git", "remote", "get-url", "origin")
 	out, err := cmd.CombinedOutput()
