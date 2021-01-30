@@ -7,9 +7,7 @@ import (
 	"github.com/skanehira/ght/utils"
 )
 
-var (
-	CommentUI *SelectUI
-)
+var CommentUI *SelectUI
 
 type Comment struct {
 	ID        string
@@ -32,35 +30,38 @@ func (c *Comment) Fields() []Field {
 	return f
 }
 
-func NewCommentUI() *SelectUI {
-	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlO:
-			for _, s := range CommentUI.selected {
-				comment := s.(*Comment)
-				if err := utils.OpenBrowser(comment.URL); err != nil {
-					log.Println(err)
-				}
-			}
-			if len(CommentUI.selected) == 0 {
-				data := CommentUI.GetSelect()
-				if data != nil {
-					if err := utils.OpenBrowser(data.(*Comment).URL); err != nil {
+func NewCommentUI() {
+	setOpt := func(ui *SelectUI) {
+		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			switch event.Key() {
+			case tcell.KeyCtrlO:
+				for _, s := range CommentUI.selected {
+					comment := s.(*Comment)
+					if err := utils.OpenBrowser(comment.URL); err != nil {
 						log.Println(err)
 					}
 				}
+				if len(CommentUI.selected) == 0 {
+					data := CommentUI.GetSelect()
+					if data != nil {
+						if err := utils.OpenBrowser(data.(*Comment).URL); err != nil {
+							log.Println(err)
+						}
+					}
+				}
 			}
+			return event
 		}
-		return UI.Capture(event)
+
+		ui.header = []string{
+			"",
+			"Author",
+			"UpdatedAt",
+		}
+		ui.hasHeader = len(ui.header) > 0
 	}
 
-	header := []string{
-		"",
-		"Author",
-		"UpdatedAt",
-	}
-
-	ui := NewSelectListUI("comment list", header, tcell.ColorYellow, nil, capture, nil)
+	ui := NewSelectListUI("comment list", tcell.ColorYellow, setOpt)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
@@ -69,5 +70,4 @@ func NewCommentUI() *SelectUI {
 	})
 
 	CommentUI = ui
-	return ui
 }

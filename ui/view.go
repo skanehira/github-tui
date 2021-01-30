@@ -29,7 +29,7 @@ func NewViewUI(previewType string) *viewUI {
 	ui.SetDynamicColors(true).SetWordWrap(false)
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		return UI.Capture(event)
+		return event
 	})
 
 	switch previewType {

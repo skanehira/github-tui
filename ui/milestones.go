@@ -7,9 +7,7 @@ import (
 	"github.com/skanehira/ght/utils"
 )
 
-var (
-	MilestoneUI *SelectUI
-)
+var MilestoneUI *SelectUI
 
 type Milestone struct {
 	ID    string
@@ -27,7 +25,7 @@ func (m *Milestone) Fields() []Field {
 	}
 }
 
-func NewMilestoneUI() *SelectUI {
+func NewMilestoneUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),
@@ -50,31 +48,33 @@ func NewMilestoneUI() *SelectUI {
 	//	return milestones, resp.PageInfo
 	//}
 
-	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlO:
-			var urls []string
-			if len(MilestoneUI.selected) == 0 {
-				data := MilestoneUI.GetSelect()
-				if data != nil {
-					urls = append(urls, data.(*Milestone).URL)
-				}
-			} else {
-				for _, s := range MilestoneUI.selected {
-					urls = append(urls, s.(*Milestone).URL)
-				}
-			}
+	setOpt := func(ui *SelectUI) {
 
-			for _, url := range urls {
-				if err := utils.OpenBrowser(url); err != nil {
-					log.Println(err)
+		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			switch event.Key() {
+			case tcell.KeyCtrlO:
+				var urls []string
+				if len(MilestoneUI.selected) == 0 {
+					data := MilestoneUI.GetSelect()
+					if data != nil {
+						urls = append(urls, data.(*Milestone).URL)
+					}
+				} else {
+					for _, s := range MilestoneUI.selected {
+						urls = append(urls, s.(*Milestone).URL)
+					}
+				}
+
+				for _, url := range urls {
+					if err := utils.OpenBrowser(url); err != nil {
+						log.Println(err)
+					}
 				}
 			}
+			return event
 		}
-		return UI.Capture(event)
 	}
 
-	ui := NewSelectListUI("milestone list", nil, tcell.ColorGreen, nil, capture, nil)
+	ui := NewSelectListUI("milestone list", tcell.ColorGreen, setOpt)
 	MilestoneUI = ui
-	return ui
 }

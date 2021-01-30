@@ -7,9 +7,7 @@ import (
 	"github.com/skanehira/ght/utils"
 )
 
-var (
-	ProjectUI *SelectUI
-)
+var ProjectUI *SelectUI
 
 type Project struct {
 	Name string
@@ -26,7 +24,7 @@ func (p *Project) Fields() []Field {
 	}
 }
 
-func NewProjectUI() *SelectUI {
+func NewProjectUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),
@@ -49,31 +47,32 @@ func NewProjectUI() *SelectUI {
 	//	return projects, resp.PageInfo
 	//}
 
-	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlO:
-			var urls []string
-			if len(ProjectUI.selected) == 0 {
-				data := ProjectUI.GetSelect()
-				if data != nil {
-					urls = append(urls, data.(*Project).URL)
+	setOpt := func(ui *SelectUI) {
+		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			switch event.Key() {
+			case tcell.KeyCtrlO:
+				var urls []string
+				if len(ProjectUI.selected) == 0 {
+					data := ProjectUI.GetSelect()
+					if data != nil {
+						urls = append(urls, data.(*Project).URL)
+					}
+				} else {
+					for _, s := range ProjectUI.selected {
+						urls = append(urls, s.(*Project).URL)
+					}
 				}
-			} else {
-				for _, s := range ProjectUI.selected {
-					urls = append(urls, s.(*Project).URL)
-				}
-			}
 
-			for _, url := range urls {
-				if err := utils.OpenBrowser(url); err != nil {
-					log.Println(err)
+				for _, url := range urls {
+					if err := utils.OpenBrowser(url); err != nil {
+						log.Println(err)
+					}
 				}
 			}
+			return event
 		}
-		return UI.Capture(event)
 	}
 
-	ui := NewSelectListUI("project list", nil, tcell.ColorLightSalmon, nil, capture, nil)
+	ui := NewSelectListUI("project list", tcell.ColorLightSalmon, setOpt)
 	ProjectUI = ui
-	return ui
 }

@@ -4,9 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-var (
-	LabelUI *SelectUI
-)
+var LabelUI *SelectUI
 
 type Label struct {
 	Name        string
@@ -49,11 +47,13 @@ func NewLabelsUI() *SelectUI {
 	//	return labels, resp.PageInfo
 	//}
 
-	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return UI.Capture(event)
+	setOpt := func(ui *SelectUI) {
+		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			return event
+		}
 	}
 
-	ui := NewSelectListUI("label list", nil, tcell.ColorLightYellow, nil, capture, nil)
+	ui := NewSelectListUI("label list", tcell.ColorLightYellow, setOpt)
 	LabelUI = ui
 	return ui
 }

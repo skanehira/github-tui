@@ -4,9 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-var (
-	AssigneesUI *SelectUI
-)
+var AssigneesUI *SelectUI
 
 type AssignableUser struct {
 	Login string
@@ -44,11 +42,13 @@ func NewAssignableUI() *SelectUI {
 	//	return assignees, resp.PageInfo
 	//}
 
-	capture := func(event *tcell.EventKey) *tcell.EventKey {
-		return UI.Capture(event)
+	setOpt := func(ui *SelectUI) {
+		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			return event
+		}
 	}
 
-	ui := NewSelectListUI("assignable user list", nil, tcell.ColorFuchsia, nil, capture, nil)
+	ui := NewSelectListUI("assignable user list", tcell.ColorFuchsia, setOpt)
 	AssigneesUI = ui
 	return ui
 }

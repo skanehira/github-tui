@@ -22,9 +22,10 @@ type Field struct {
 }
 
 type (
-	GetListFunc func(cursor *string) ([]Item, *github.PageInfo)
-	CaptureFunc func(event *tcell.EventKey) *tcell.EventKey
-	InitFunc    func(ui *SelectUI)
+	SetSelectUIOpt func(ui *SelectUI)
+	GetListFunc    func(cursor *string) ([]Item, *github.PageInfo)
+	CaptureFunc    func(event *tcell.EventKey) *tcell.EventKey
+	InitFunc       func(ui *SelectUI)
 )
 
 type SelectUI struct {
@@ -41,24 +42,18 @@ type SelectUI struct {
 	*tview.Table
 }
 
-func NewSelectListUI(title string, header []string, boxColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectUI {
+func NewSelectListUI(title string, boxColor tcell.Color, setOpt SetSelectUIOpt) *SelectUI {
 	ui := &SelectUI{
-		hasNext:   true,
-		getList:   getList,
-		capture:   capture,
-		init:      init,
-		header:    header,
-		hasHeader: len(header) > 0,
-		selected:  make(map[string]Item),
-		boxColor:  boxColor,
-		Table:     tview.NewTable().SetSelectable(false, false),
+		hasNext:  true,
+		selected: make(map[string]Item),
+		boxColor: boxColor,
+		Table:    tview.NewTable().SetSelectable(false, false),
 	}
 
-	if len(header) > 0 {
-		ui.SetFixed(1, len(ui.header))
-	}
 	ui.SetBorder(true).SetTitle(title).SetTitleAlign(tview.AlignLeft)
 	ui.SetBorderColor(boxColor)
+
+	setOpt(ui)
 
 	go ui.Init()
 	return ui

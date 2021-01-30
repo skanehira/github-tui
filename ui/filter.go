@@ -17,7 +17,7 @@ type filterUI struct {
 
 func NewFilterUI() {
 	ui := &filterUI{
-		Form: tview.NewForm().AddInputField("Filters", "", 100, nil, nil),
+		Form: tview.NewForm().AddInputField("Filters", filterQuery, 100, nil, nil),
 	}
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -26,7 +26,7 @@ func NewFilterUI() {
 			filterQuery = ui.GetFormItem(0).(*tview.InputField).GetText()
 			go IssueUI.GetList()
 		}
-		return UI.Capture(event)
+		return event
 	})
 	FilterUI = ui
 }

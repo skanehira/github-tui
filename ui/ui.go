@@ -60,17 +60,6 @@ func (ui *ui) toPrevUI() {
 	ui.app.SetFocus(p)
 }
 
-func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
-	switch event.Key() {
-	case tcell.KeyCtrlN:
-		UI.toNextUI()
-	case tcell.KeyCtrlP:
-		UI.toPrevUI()
-	}
-
-	return event
-}
-
 func (ui *ui) Start() error {
 	NewViewUI("issue preview")
 	NewViewUI("comment preview")
@@ -104,6 +93,16 @@ func (ui *ui) Start() error {
 		AddAndSwitchToPage("main", grid, true)
 
 	ui.app.SetRoot(ui.pages, true)
+
+	ui.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlN:
+			UI.toNextUI()
+		case tcell.KeyCtrlP:
+			UI.toPrevUI()
+		}
+		return event
+	})
 
 	ui.current = 5
 	ui.app.SetFocus(IssueUI)
