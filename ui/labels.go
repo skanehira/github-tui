@@ -6,7 +6,7 @@ import (
 
 var LabelUI *SelectUI
 
-func NewLabelsUI() *SelectUI {
+func NewLabelsUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),
@@ -40,5 +40,4 @@ func NewLabelsUI() *SelectUI {
 
 	ui := NewSelectListUI(UIKindLabel, tcell.ColorLightYellow, setOpt)
 	LabelUI = ui
-	return ui
 }

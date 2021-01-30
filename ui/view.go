@@ -15,7 +15,7 @@ type viewUI struct {
 	*tview.TextView
 }
 
-func NewViewUI(uiKind UIKind) *viewUI {
+func NewViewUI(uiKind UIKind) {
 	ui := &viewUI{
 		TextView: tview.NewTextView(),
 	}
@@ -33,7 +33,6 @@ func NewViewUI(uiKind UIKind) *viewUI {
 	case UIKindCommentView:
 		CommentViewUI = ui
 	}
-	return ui
 }
 
 func (ui *viewUI) updateView(text string) {

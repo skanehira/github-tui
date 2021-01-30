@@ -6,7 +6,7 @@ import (
 
 var AssigneesUI *SelectUI
 
-func NewAssignableUI() *SelectUI {
+func NewAssignableUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),
@@ -36,5 +36,4 @@ func NewAssignableUI() *SelectUI {
 
 	ui := NewSelectListUI(UIKindAssignee, tcell.ColorFuchsia, setOpt)
 	AssigneesUI = ui
-	return ui
 }
