@@ -62,8 +62,8 @@ func (ui *ui) toPrevUI() {
 
 func (ui *ui) Start() error {
 	NewFilterUI()
-	NewViewUI("issue preview")
-	NewViewUI("comment preview")
+	NewViewUI(UIKindIssueView)
+	NewViewUI(UIKindCommentView)
 	NewIssueUI()
 	NewLabelsUI()
 	NewMilestoneUI()

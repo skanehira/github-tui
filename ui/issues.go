@@ -219,7 +219,7 @@ func NewIssueUI() {
 		}
 	}
 
-	ui := NewSelectListUI("issue list", tcell.ColorBlue, opt)
+	ui := NewSelectListUI(UIKindIssue, tcell.ColorBlue, opt)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {

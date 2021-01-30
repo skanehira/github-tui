@@ -48,7 +48,7 @@ func NewAssignableUI() *SelectUI {
 		}
 	}
 
-	ui := NewSelectListUI("assignable user list", tcell.ColorFuchsia, setOpt)
+	ui := NewSelectListUI(UIKindAssignee, tcell.ColorFuchsia, setOpt)
 	AssigneesUI = ui
 	return ui
 }

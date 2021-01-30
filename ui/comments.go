@@ -61,7 +61,7 @@ func NewCommentUI() {
 		ui.hasHeader = len(ui.header) > 0
 	}
 
-	ui := NewSelectListUI("comment list", tcell.ColorYellow, setOpt)
+	ui := NewSelectListUI(UIKindComment, tcell.ColorYellow, setOpt)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {

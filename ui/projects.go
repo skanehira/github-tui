@@ -73,6 +73,6 @@ func NewProjectUI() {
 		}
 	}
 
-	ui := NewSelectListUI("project list", tcell.ColorLightSalmon, setOpt)
+	ui := NewSelectListUI(UIKindProject, tcell.ColorLightSalmon, setOpt)
 	ProjectUI = ui
 }

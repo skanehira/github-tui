@@ -75,6 +75,6 @@ func NewMilestoneUI() {
 		}
 	}
 
-	ui := NewSelectListUI("milestone list", tcell.ColorGreen, setOpt)
+	ui := NewSelectListUI(UIKindMilestones, tcell.ColorGreen, setOpt)
 	MilestoneUI = ui
 }

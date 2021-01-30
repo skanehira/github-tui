@@ -53,7 +53,7 @@ func NewLabelsUI() *SelectUI {
 		}
 	}
 
-	ui := NewSelectListUI("label list", tcell.ColorLightYellow, setOpt)
+	ui := NewSelectListUI(UIKindLabel, tcell.ColorLightYellow, setOpt)
 	LabelUI = ui
 	return ui
 }

@@ -11,31 +11,26 @@ var (
 	CommentViewUI *viewUI
 )
 
-const (
-	IssuePreview   = "issue preview"
-	CommentPreview = "comment preview"
-)
-
 type viewUI struct {
 	*tview.TextView
 }
 
-func NewViewUI(previewType string) *viewUI {
+func NewViewUI(uiKind UIKind) *viewUI {
 	ui := &viewUI{
 		TextView: tview.NewTextView(),
 	}
 
-	ui.SetBorder(true).SetTitle(previewType).SetTitleAlign(tview.AlignLeft)
+	ui.SetBorder(true).SetTitle(string(uiKind)).SetTitleAlign(tview.AlignLeft)
 	ui.SetDynamicColors(true).SetWordWrap(false)
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		return event
 	})
 
-	switch previewType {
-	case IssuePreview:
+	switch uiKind {
+	case UIKindIssueView:
 		IssueViewUI = ui
-	case CommentPreview:
+	case UIKindCommentView:
 		CommentViewUI = ui
 	}
 	return ui

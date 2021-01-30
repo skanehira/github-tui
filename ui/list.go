@@ -11,6 +11,19 @@ const (
 	selected   = "\u25c9"
 )
 
+type UIKind string
+
+const (
+	UIKindIssue       UIKind = "issue list"
+	UIKindAssignee           = "assignable user list"
+	UIKindComment            = "comment list"
+	UIKindLabel              = "label list"
+	UIKindMilestones         = "milestone list"
+	UIKindProject            = "project list"
+	UIKindIssueView          = "issue preview"
+	UIKindCommentView        = "comment preview"
+)
+
 type Item interface {
 	Key() string
 	Fields() []Field
@@ -29,6 +42,7 @@ type (
 )
 
 type SelectUI struct {
+	uiKind    UIKind
 	cursor    *string
 	hasNext   bool
 	getList   GetListFunc
@@ -42,15 +56,16 @@ type SelectUI struct {
 	*tview.Table
 }
 
-func NewSelectListUI(title string, boxColor tcell.Color, setOpt SetSelectUIOpt) *SelectUI {
+func NewSelectListUI(uiKind UIKind, boxColor tcell.Color, setOpt SetSelectUIOpt) *SelectUI {
 	ui := &SelectUI{
+		uiKind:   uiKind,
 		hasNext:  true,
 		selected: make(map[string]Item),
 		boxColor: boxColor,
 		Table:    tview.NewTable().SetSelectable(false, false),
 	}
 
-	ui.SetBorder(true).SetTitle(title).SetTitleAlign(tview.AlignLeft)
+	ui.SetBorder(true).SetTitle(string(uiKind)).SetTitleAlign(tview.AlignLeft)
 	ui.SetBorderColor(boxColor)
 
 	setOpt(ui)
@@ -127,6 +142,11 @@ func (ui *SelectUI) UpdateView() {
 			}
 		}
 		ui.ScrollToBeginning()
+
+		// when update filter, then update ui related issue primitives
+		if ui.uiKind == UIKindIssue {
+			updateUIRelatedIssue(ui, 1)
+		}
 	}
 }
 
