@@ -191,74 +191,52 @@ func NewIssueUI() {
 		}
 
 		ui.hasHeader = len(ui.header) > 0
-
-		ui.init = func(ui *SelectUI) {
-			if len(ui.items) > 0 {
-				issue := ui.items[0].(*Issue)
-				IssueViewUI.updateView(issue.Body)
-				if len(issue.Comments) > 0 {
-					CommentUI.SetList(issue.Comments)
-					CommentViewUI.updateView(issue.Comments[0].(*Comment).Body)
-				}
-				if len(issue.Assignees) > 0 {
-					AssigneesUI.SetList(issue.Assignees)
-				}
-
-				if len(issue.Labels) > 0 {
-					LabelUI.SetList(issue.Labels)
-				}
-
-				if len(issue.MileStone) > 0 {
-					MilestoneUI.SetList(issue.MileStone)
-				}
-
-				if len(issue.Projects) > 0 {
-					ProjectUI.SetList(issue.Projects)
-				}
-			}
-		}
 	}
 
 	ui := NewSelectListUI(UIKindIssue, tcell.ColorBlue, opt)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
-		if row > 0 {
-			issue := ui.items[row-1].(*Issue)
-			IssueViewUI.updateView(issue.Body)
-
-			if len(issue.Comments) > 0 {
-				CommentUI.SetList(issue.Comments)
-				CommentViewUI.updateView(issue.Comments[0].(*Comment).Body)
-			} else {
-				CommentUI.ClearView()
-				CommentViewUI.Clear()
-			}
-
-			if len(issue.Assignees) > 0 {
-				AssigneesUI.SetList(issue.Assignees)
-			} else {
-				AssigneesUI.ClearView()
-			}
-
-			if len(issue.Labels) > 0 {
-				LabelUI.SetList(issue.Labels)
-			} else {
-				LabelUI.ClearView()
-			}
-
-			if len(issue.MileStone) > 0 {
-				MilestoneUI.SetList(issue.MileStone)
-			} else {
-				MilestoneUI.ClearView()
-			}
-
-			if len(issue.Projects) > 0 {
-				ProjectUI.SetList(issue.Projects)
-			} else {
-				ProjectUI.ClearView()
-			}
-		}
+		updateUIRelatedIssue(ui, row)
 	})
 
 	IssueUI = ui
+}
+
+func updateUIRelatedIssue(ui *SelectUI, row int) {
+	if row > 0 {
+		issue := ui.items[row-1].(*Issue)
+		IssueViewUI.updateView(issue.Body)
+
+		if len(issue.Comments) > 0 {
+			CommentUI.SetList(issue.Comments)
+			CommentViewUI.updateView(issue.Comments[0].(*Comment).Body)
+		} else {
+			CommentUI.ClearView()
+			CommentViewUI.Clear()
+		}
+
+		if len(issue.Assignees) > 0 {
+			AssigneesUI.SetList(issue.Assignees)
+		} else {
+			AssigneesUI.ClearView()
+		}
+
+		if len(issue.Labels) > 0 {
+			LabelUI.SetList(issue.Labels)
+		} else {
+			LabelUI.ClearView()
+		}
+
+		if len(issue.MileStone) > 0 {
+			MilestoneUI.SetList(issue.MileStone)
+		} else {
+			MilestoneUI.ClearView()
+		}
+
+		if len(issue.Projects) > 0 {
+			ProjectUI.SetList(issue.Projects)
+		} else {
+			ProjectUI.ClearView()
+		}
+	}
 }
