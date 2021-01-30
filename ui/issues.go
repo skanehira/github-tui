@@ -52,7 +52,7 @@ var (
 	IssueUI *SelectListUI
 )
 
-func NewIssueUI() *SelectListUI {
+func NewIssueUI() {
 	queries := []string{
 		fmt.Sprintf("repo:%s/%s", config.GitHub.Owner, config.GitHub.Repo),
 		"is:issue",
@@ -249,5 +249,4 @@ func NewIssueUI() *SelectListUI {
 	})
 
 	IssueUI = ui
-	return ui
 }

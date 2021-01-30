@@ -5,16 +5,18 @@ import (
 	"github.com/rivo/tview"
 )
 
+var FilterUI *filterUI
+
 var (
 	filterQuery string
 )
 
-type FilterUI struct {
+type filterUI struct {
 	*tview.Form
 }
 
-func NewFilterUI() *FilterUI {
-	ui := &FilterUI{
+func NewFilterUI() {
+	ui := &filterUI{
 		Form: tview.NewForm().AddInputField("Filters", "", 100, nil, nil),
 	}
 
@@ -26,12 +28,11 @@ func NewFilterUI() *FilterUI {
 		}
 		return UI.Capture(event)
 	})
-
-	return ui
+	FilterUI = ui
 }
 
-func (ui *FilterUI) focus() {
+func (ui *filterUI) focus() {
 }
 
-func (ui *FilterUI) blur() {
+func (ui *filterUI) blur() {
 }

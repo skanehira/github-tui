@@ -72,32 +72,33 @@ func (ui *ui) Capture(event *tcell.EventKey) *tcell.EventKey {
 }
 
 func (ui *ui) Start() error {
-	issuePreview := NewViewUI("issue preview")
-	commentPreview := NewViewUI("comment preview")
-	issueUI := NewIssueUI()
-	labelUI := NewLabelsUI()
-	milestoneUI := NewMilestoneUI()
-	projectUI := NewProjectUI()
-	assigneesUI := NewAssignableUI()
-	filterUI := NewFilterUI()
-	commentUI := NewCommentUI()
+	NewViewUI("issue preview")
+	NewViewUI("comment preview")
+	NewIssueUI()
+	NewLabelsUI()
+	NewMilestoneUI()
+	NewProjectUI()
+	NewAssignableUI()
+	NewFilterUI()
+	NewCommentUI()
 
-	ui.primitives = []Primitive{filterUI, assigneesUI, labelUI, milestoneUI, projectUI, issueUI, issuePreview, commentUI, commentPreview}
+	ui.primitives = []Primitive{FilterUI, AssigneesUI, LabelUI, MilestoneUI,
+		ProjectUI, IssueUI, IssueViewUI, CommentUI, CommentViewUI}
 	ui.primitiveLen = len(ui.primitives)
 
 	// for readability
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
 	grid := tview.NewGrid().SetRows(3).
-		AddItem(filterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
-		AddItem(issueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
-		AddItem(assigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
-		AddItem(labelUI, row+2, col, rowSpan+1, colSpan+1, 0, 0, true).
-		AddItem(milestoneUI, row+3, col, rowSpan+1, colSpan+1, 0, 0, true).
-		AddItem(projectUI, row+4, col, rowSpan+1, colSpan+1, 0, 0, true).
-		AddItem(commentUI, row+5, col, rowSpan+3, colSpan+4, 0, 0, true).
-		AddItem(issuePreview, row+1, col+4, rowSpan+4, colSpan+3, 0, 0, true).
-		AddItem(commentPreview, row+5, col+4, rowSpan+3, colSpan+3, 0, 0, true)
+		AddItem(FilterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
+		AddItem(IssueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
+		AddItem(AssigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(LabelUI, row+2, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(MilestoneUI, row+3, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(ProjectUI, row+4, col, rowSpan+1, colSpan+1, 0, 0, true).
+		AddItem(CommentUI, row+5, col, rowSpan+3, colSpan+4, 0, 0, true).
+		AddItem(IssueViewUI, row+1, col+4, rowSpan+4, colSpan+3, 0, 0, true).
+		AddItem(CommentViewUI, row+5, col+4, rowSpan+3, colSpan+3, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
@@ -105,8 +106,8 @@ func (ui *ui) Start() error {
 	ui.app.SetRoot(ui.pages, true)
 
 	ui.current = 5
-	ui.app.SetFocus(issueUI)
-	issueUI.focus()
+	ui.app.SetFocus(IssueUI)
+	IssueUI.focus()
 
 	go func() {
 		for f := range UI.updater {
