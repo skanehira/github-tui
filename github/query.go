@@ -26,6 +26,10 @@ type Repositories struct {
 }
 
 type Issue struct {
+	ID         githubv4.String
+	Repository struct {
+		Name githubv4.String
+	}
 	Number githubv4.Int
 	Body   githubv4.String
 	State  githubv4.String

@@ -15,6 +15,8 @@ import (
 )
 
 type Issue struct {
+	ID        string
+	Repo      string
 	Number    string
 	State     string
 	Title     string
@@ -29,7 +31,7 @@ type Issue struct {
 }
 
 func (i *Issue) Key() string {
-	return i.Number
+	return i.ID
 }
 
 func (i *Issue) Fields() []Field {
@@ -39,6 +41,7 @@ func (i *Issue) Fields() []Field {
 	}
 
 	f := []Field{
+		{Text: i.Repo, Color: tcell.ColorLightSalmon},
 		{Text: i.Number, Color: tcell.ColorBlue},
 		{Text: i.State, Color: stateColor},
 		{Text: i.Author, Color: tcell.ColorYellow},
@@ -93,6 +96,8 @@ func NewIssueUI() {
 			issues := make([]Item, len(resp.Nodes))
 			for i, node := range resp.Nodes {
 				issue := &Issue{
+					ID:     string(node.Issue.ID),
+					Repo:   string(node.Issue.Repository.Name),
 					Number: strconv.Itoa(int(node.Issue.Number)),
 					State:  string(node.Issue.State),
 					Author: string(node.Issue.Author.Login),
@@ -178,6 +183,7 @@ func NewIssueUI() {
 
 		ui.header = []string{
 			"",
+			"Repo",
 			"Number",
 			"State",
 			"Author",

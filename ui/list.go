@@ -105,15 +105,22 @@ func (ui *SelectUI) UpdateView() {
 			})
 		}
 
+		if len(ui.items) < 1 {
+			return
+		}
+
 		h := 0
 		if ui.hasHeader {
 			h++
 		}
+
+		selectColor := ui.items[0].Fields()[0].Color
+
 		for i, data := range ui.items {
 			if _, ok := ui.selected[data.Key()]; ok {
-				ui.SetCell(i+h, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell(selected).SetTextColor(selectColor))
 			} else {
-				ui.SetCell(i+h, 0, tview.NewTableCell(unselected).SetTextColor(ui.boxColor))
+				ui.SetCell(i+h, 0, tview.NewTableCell(unselected).SetTextColor(selectColor))
 			}
 			for j, f := range data.Fields() {
 				ui.SetCell(i+h, j+1, tview.NewTableCell(f.Text).SetTextColor(f.Color))
