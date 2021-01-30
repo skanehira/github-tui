@@ -60,7 +60,7 @@ func NewCommentUI() *SelectListUI {
 		"UpdatedAt",
 	}
 
-	ui := NewSelectListUI("comment list", header, tcell.ColorBlue, nil, capture, nil)
+	ui := NewSelectListUI("comment list", header, tcell.ColorYellow, nil, capture, nil)
 
 	ui.SetSelectionChangedFunc(func(row, col int) {
 		if row > 0 {
