@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	CommentUI *SelectListUI
+	CommentUI *SelectUI
 )
 
 type Comment struct {
@@ -32,7 +32,7 @@ func (c *Comment) Fields() []Field {
 	return f
 }
 
-func NewCommentUI() *SelectListUI {
+func NewCommentUI() *SelectUI {
 	capture := func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlO:

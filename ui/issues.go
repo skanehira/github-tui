@@ -49,7 +49,7 @@ func (i *Issue) Fields() []Field {
 }
 
 var (
-	IssueUI *SelectListUI
+	IssueUI *SelectUI
 )
 
 func NewIssueUI() {
@@ -181,7 +181,7 @@ func NewIssueUI() {
 		"Title",
 	}
 
-	init := func(ui *SelectListUI) {
+	init := func(ui *SelectUI) {
 		if len(ui.items) > 0 {
 			issue := ui.items[0].(*Issue)
 			IssueViewUI.updateView(issue.Body)

@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ProjectUI *SelectListUI
+	ProjectUI *SelectUI
 )
 
 type Project struct {
@@ -26,7 +26,7 @@ func (p *Project) Fields() []Field {
 	}
 }
 
-func NewProjectUI() *SelectListUI {
+func NewProjectUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),

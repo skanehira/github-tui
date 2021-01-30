@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	LabelUI *SelectListUI
+	LabelUI *SelectUI
 )
 
 type Label struct {
@@ -23,7 +23,7 @@ func (l *Label) Fields() []Field {
 	}
 }
 
-func NewLabelsUI() *SelectListUI {
+func NewLabelsUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),

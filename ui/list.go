@@ -24,10 +24,10 @@ type Field struct {
 type (
 	GetListFunc func(cursor *string) ([]Item, *github.PageInfo)
 	CaptureFunc func(event *tcell.EventKey) *tcell.EventKey
-	InitFunc    func(ui *SelectListUI)
+	InitFunc    func(ui *SelectUI)
 )
 
-type SelectListUI struct {
+type SelectUI struct {
 	cursor    *string
 	hasNext   bool
 	getList   GetListFunc
@@ -36,20 +36,20 @@ type SelectListUI struct {
 	header    []string
 	hasHeader bool
 	items     []Item
-	selected  map[string]interface{}
+	selected  map[string]Item
 	boxColor  tcell.Color
 	*tview.Table
 }
 
-func NewSelectListUI(title string, header []string, boxColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectListUI {
-	ui := &SelectListUI{
+func NewSelectListUI(title string, header []string, boxColor tcell.Color, getList GetListFunc, capture CaptureFunc, init InitFunc) *SelectUI {
+	ui := &SelectUI{
 		hasNext:   true,
 		getList:   getList,
 		capture:   capture,
 		init:      init,
 		header:    header,
 		hasHeader: len(header) > 0,
-		selected:  make(map[string]interface{}),
+		selected:  make(map[string]Item),
 		boxColor:  boxColor,
 		Table:     tview.NewTable().SetSelectable(false, false),
 	}
@@ -64,7 +64,7 @@ func NewSelectListUI(title string, header []string, boxColor tcell.Color, getLis
 	return ui
 }
 
-func (ui *SelectListUI) GetList() {
+func (ui *SelectUI) GetList() {
 	if ui.getList != nil {
 		list, pageInfo := ui.getList(nil)
 		if pageInfo != nil {
@@ -78,14 +78,14 @@ func (ui *SelectListUI) GetList() {
 	}
 }
 
-func (ui *SelectListUI) SetList(list []Item) {
+func (ui *SelectUI) SetList(list []Item) {
 	ui.items = list
-	ui.selected = make(map[string]interface{})
+	ui.selected = make(map[string]Item)
 	ui.Select(0, 0)
 	ui.UpdateView()
 }
 
-func (ui *SelectListUI) FetchList() {
+func (ui *SelectUI) FetchList() {
 	if ui.hasNext {
 		list, pageInfo := ui.getList(ui.cursor)
 		ui.hasNext = bool(pageInfo.HasNextPage)
@@ -96,7 +96,7 @@ func (ui *SelectListUI) FetchList() {
 	}
 }
 
-func (ui *SelectListUI) UpdateView() {
+func (ui *SelectUI) UpdateView() {
 	UI.updater <- func() {
 		ui.Clear()
 		for i, h := range ui.header {
@@ -128,7 +128,7 @@ func (ui *SelectListUI) UpdateView() {
 	}
 }
 
-func (ui *SelectListUI) Init() {
+func (ui *SelectUI) Init() {
 	ui.GetList()
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -172,7 +172,7 @@ func (ui *SelectListUI) Init() {
 	}
 }
 
-func (ui *SelectListUI) toggleSelected(row int) {
+func (ui *SelectUI) toggleSelected(row int) {
 	var data Item
 	if ui.hasHeader {
 		data = ui.items[row-1]
@@ -188,7 +188,7 @@ func (ui *SelectListUI) toggleSelected(row int) {
 	}
 }
 
-func (ui *SelectListUI) GetSelect() Item {
+func (ui *SelectUI) GetSelect() Item {
 	row, _ := ui.GetSelection()
 	if ui.hasHeader {
 		row = row - 1
@@ -199,15 +199,15 @@ func (ui *SelectListUI) GetSelect() Item {
 	return nil
 }
 
-func (ui *SelectListUI) focus() {
+func (ui *SelectUI) focus() {
 	ui.SetSelectable(true, false)
 }
 
-func (ui *SelectListUI) blur() {
+func (ui *SelectUI) blur() {
 	ui.SetSelectable(false, false)
 }
 
-func (ui *SelectListUI) ClearView() {
+func (ui *SelectUI) ClearView() {
 	ui.Clear()
-	ui.selected = make(map[string]interface{})
+	ui.selected = make(map[string]Item)
 }

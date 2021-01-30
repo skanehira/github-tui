@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	AssigneesUI *SelectListUI
+	AssigneesUI *SelectUI
 )
 
 type AssignableUser struct {
@@ -22,7 +22,7 @@ func (a *AssignableUser) Fields() []Field {
 	}
 }
 
-func NewAssignableUI() *SelectListUI {
+func NewAssignableUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),

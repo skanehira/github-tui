@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	MilestoneUI *SelectListUI
+	MilestoneUI *SelectUI
 )
 
 type Milestone struct {
@@ -27,7 +27,7 @@ func (m *Milestone) Fields() []Field {
 	}
 }
 
-func NewMilestoneUI() *SelectListUI {
+func NewMilestoneUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{
 	//		"owner":  githubv4.String(config.GitHub.Owner),
