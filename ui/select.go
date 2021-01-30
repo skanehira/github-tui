@@ -3,6 +3,7 @@ package ui
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"github.com/skanehira/ght/domain"
 	"github.com/skanehira/ght/github"
 )
 
@@ -24,19 +25,9 @@ const (
 	UIKindCommentView        = "comment preview"
 )
 
-type Item interface {
-	Key() string
-	Fields() []Field
-}
-
-type Field struct {
-	Text  string
-	Color tcell.Color
-}
-
 type (
 	SetSelectUIOpt func(ui *SelectUI)
-	GetListFunc    func(cursor *string) ([]Item, *github.PageInfo)
+	GetListFunc    func(cursor *string) ([]domain.Item, *github.PageInfo)
 	CaptureFunc    func(event *tcell.EventKey) *tcell.EventKey
 	InitFunc       func(ui *SelectUI)
 )
@@ -50,8 +41,8 @@ type SelectUI struct {
 	init      InitFunc
 	header    []string
 	hasHeader bool
-	items     []Item
-	selected  map[string]Item
+	items     []domain.Item
+	selected  map[string]domain.Item
 	boxColor  tcell.Color
 	*tview.Table
 }
@@ -60,7 +51,7 @@ func NewSelectListUI(uiKind UIKind, boxColor tcell.Color, setOpt SetSelectUIOpt)
 	ui := &SelectUI{
 		uiKind:   uiKind,
 		hasNext:  true,
-		selected: make(map[string]Item),
+		selected: make(map[string]domain.Item),
 		boxColor: boxColor,
 		Table:    tview.NewTable().SetSelectable(false, false),
 	}
@@ -88,9 +79,9 @@ func (ui *SelectUI) GetList() {
 	}
 }
 
-func (ui *SelectUI) SetList(list []Item) {
+func (ui *SelectUI) SetList(list []domain.Item) {
 	ui.items = list
-	ui.selected = make(map[string]Item)
+	ui.selected = make(map[string]domain.Item)
 	ui.Select(0, 0)
 	ui.UpdateView()
 }
@@ -195,7 +186,7 @@ func (ui *SelectUI) Init() {
 }
 
 func (ui *SelectUI) toggleSelected(row int) {
-	var data Item
+	var data domain.Item
 	if ui.hasHeader {
 		data = ui.items[row-1]
 	} else {
@@ -211,7 +202,7 @@ func (ui *SelectUI) toggleSelected(row int) {
 	}
 }
 
-func (ui *SelectUI) GetSelect() Item {
+func (ui *SelectUI) GetSelect() domain.Item {
 	row, _ := ui.GetSelection()
 	if ui.hasHeader {
 		row = row - 1
@@ -232,5 +223,5 @@ func (ui *SelectUI) blur() {
 
 func (ui *SelectUI) ClearView() {
 	ui.Clear()
-	ui.selected = make(map[string]Item)
+	ui.selected = make(map[string]domain.Item)
 }

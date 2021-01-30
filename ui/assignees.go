@@ -6,20 +6,6 @@ import (
 
 var AssigneesUI *SelectUI
 
-type AssignableUser struct {
-	Login string
-}
-
-func (a *AssignableUser) Key() string {
-	return a.Login
-}
-
-func (a *AssignableUser) Fields() []Field {
-	return []Field{
-		{Text: a.Login, Color: tcell.ColorFuchsia},
-	}
-}
-
 func NewAssignableUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{

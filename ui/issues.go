@@ -3,53 +3,15 @@ package ui
 import (
 	"fmt"
 	"log"
-	"reflect"
-	"strconv"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
+	"github.com/skanehira/ght/domain"
 	"github.com/skanehira/ght/github"
 	"github.com/skanehira/ght/utils"
 )
-
-type Issue struct {
-	ID        string
-	Repo      string
-	Number    string
-	State     string
-	Title     string
-	Body      string
-	Author    string
-	URL       string
-	Labels    []Item
-	Assignees []Item
-	Comments  []Item
-	MileStone []Item
-	Projects  []Item
-}
-
-func (i *Issue) Key() string {
-	return i.ID
-}
-
-func (i *Issue) Fields() []Field {
-	stateColor := tcell.ColorGreen
-	if i.State == "CLOSED" {
-		stateColor = tcell.ColorRed
-	}
-
-	f := []Field{
-		{Text: i.Repo, Color: tcell.ColorLightSalmon},
-		{Text: i.Number, Color: tcell.ColorBlue},
-		{Text: i.State, Color: stateColor},
-		{Text: i.Author, Color: tcell.ColorYellow},
-		{Text: i.Title, Color: tcell.ColorWhite},
-	}
-
-	return f
-}
 
 var IssueUI *SelectUI
 
@@ -63,7 +25,7 @@ func NewIssueUI() {
 
 		IssueFilterUI.SetQuery(strings.Join(queries, " "))
 
-		ui.getList = func(cursor *string) ([]Item, *github.PageInfo) {
+		ui.getList = func(cursor *string) ([]domain.Item, *github.PageInfo) {
 			var queries []string
 			query := IssueFilterUI.GetQuery()
 
@@ -93,66 +55,9 @@ func NewIssueUI() {
 				return nil, nil
 			}
 
-			issues := make([]Item, len(resp.Nodes))
+			issues := make([]domain.Item, len(resp.Nodes))
 			for i, node := range resp.Nodes {
-				issue := &Issue{
-					ID:     string(node.Issue.ID),
-					Repo:   string(node.Issue.Repository.Name),
-					Number: strconv.Itoa(int(node.Issue.Number)),
-					State:  string(node.Issue.State),
-					Author: string(node.Issue.Author.Login),
-					URL:    node.Issue.URL.String(),
-					Title:  string(node.Issue.Title),
-					Body:   string(node.Issue.Body),
-				}
-
-				labels := make([]Item, len(node.Issue.Labels.Nodes))
-				for i, l := range node.Issue.Labels.Nodes {
-					labels[i] = &Label{
-						Name: string(l.Name),
-					}
-				}
-				issue.Labels = labels
-
-				assignees := make([]Item, len(node.Issue.Assignees.Nodes))
-				for i, a := range node.Issue.Assignees.Nodes {
-					assignees[i] = &AssignableUser{
-						Login: string(a.Login),
-					}
-				}
-				issue.Assignees = assignees
-
-				comments := make([]Item, len(node.Issue.Comments.Nodes))
-				for i, c := range node.Issue.Comments.Nodes {
-					comments[i] = &Comment{
-						ID:        string(c.ID),
-						Author:    string(c.Author.Login),
-						UpdatedAt: c.UpdatedAt.Local().Format("2006/01/02 15:04:05"),
-						URL:       c.URL.String(),
-						Body:      string(c.Body),
-					}
-				}
-				issue.Comments = comments
-
-				if !reflect.ValueOf(node.Issue.Milestone).IsZero() {
-					issue.MileStone = append(issue.MileStone, &Milestone{
-						ID:    string(node.Issue.Milestone.ID),
-						Title: string(node.Issue.Milestone.Title),
-						URL:   node.Issue.Milestone.URL.String(),
-					})
-				}
-
-				projects := make([]Item, len(node.Issue.ProjectCards.Nodes))
-				for i, card := range node.Issue.ProjectCards.Nodes {
-					projects[i] = &Project{
-						Name: string(card.Project.Name),
-						URL:  card.Project.URL.String(),
-					}
-				}
-				issue.Projects = projects
-
-				issues[i] = issue
-
+				issues[i] = node.Issue.ToDomain()
 			}
 			return issues, &resp.PageInfo
 		}
@@ -164,11 +69,11 @@ func NewIssueUI() {
 				if len(IssueUI.selected) == 0 {
 					data := IssueUI.GetSelect()
 					if data != nil {
-						urls = append(urls, data.(*Issue).URL)
+						urls = append(urls, data.(*domain.Issue).URL)
 					}
 				} else {
 					for _, s := range IssueUI.selected {
-						urls = append(urls, s.(*Issue).URL)
+						urls = append(urls, s.(*domain.Issue).URL)
 					}
 				}
 
@@ -204,12 +109,12 @@ func NewIssueUI() {
 
 func updateUIRelatedIssue(ui *SelectUI, row int) {
 	if row > 0 {
-		issue := ui.items[row-1].(*Issue)
+		issue := ui.items[row-1].(*domain.Issue)
 		IssueViewUI.updateView(issue.Body)
 
 		if len(issue.Comments) > 0 {
 			CommentUI.SetList(issue.Comments)
-			CommentViewUI.updateView(issue.Comments[0].(*Comment).Body)
+			CommentViewUI.updateView(issue.Comments[0].(*domain.Comment).Body)
 		} else {
 			CommentUI.ClearView()
 			CommentViewUI.Clear()

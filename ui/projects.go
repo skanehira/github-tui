@@ -4,25 +4,11 @@ import (
 	"log"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/skanehira/ght/domain"
 	"github.com/skanehira/ght/utils"
 )
 
 var ProjectUI *SelectUI
-
-type Project struct {
-	Name string
-	URL  string
-}
-
-func (p *Project) Key() string {
-	return p.Name
-}
-
-func (p *Project) Fields() []Field {
-	return []Field{
-		{Text: p.Name, Color: tcell.ColorLightSalmon},
-	}
-}
 
 func NewProjectUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
@@ -55,11 +41,11 @@ func NewProjectUI() {
 				if len(ProjectUI.selected) == 0 {
 					data := ProjectUI.GetSelect()
 					if data != nil {
-						urls = append(urls, data.(*Project).URL)
+						urls = append(urls, data.(*domain.Project).URL)
 					}
 				} else {
 					for _, s := range ProjectUI.selected {
-						urls = append(urls, s.(*Project).URL)
+						urls = append(urls, s.(*domain.Project).URL)
 					}
 				}
 

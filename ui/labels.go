@@ -6,21 +6,6 @@ import (
 
 var LabelUI *SelectUI
 
-type Label struct {
-	Name        string
-	Description string
-}
-
-func (l *Label) Key() string {
-	return l.Name
-}
-
-func (l *Label) Fields() []Field {
-	return []Field{
-		{Text: l.Name, Color: tcell.ColorLightYellow},
-	}
-}
-
 func NewLabelsUI() *SelectUI {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
 	//	v := map[string]interface{}{

@@ -4,26 +4,11 @@ import (
 	"log"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/skanehira/ght/domain"
 	"github.com/skanehira/ght/utils"
 )
 
 var MilestoneUI *SelectUI
-
-type Milestone struct {
-	ID    string
-	Title string
-	URL   string
-}
-
-func (m *Milestone) Key() string {
-	return m.Title
-}
-
-func (m *Milestone) Fields() []Field {
-	return []Field{
-		{Text: m.Title, Color: tcell.ColorGreen},
-	}
-}
 
 func NewMilestoneUI() {
 	//getList := func(cursor *string) ([]List, github.PageInfo) {
@@ -57,11 +42,11 @@ func NewMilestoneUI() {
 				if len(MilestoneUI.selected) == 0 {
 					data := MilestoneUI.GetSelect()
 					if data != nil {
-						urls = append(urls, data.(*Milestone).URL)
+						urls = append(urls, data.(*domain.Milestone).URL)
 					}
 				} else {
 					for _, s := range MilestoneUI.selected {
-						urls = append(urls, s.(*Milestone).URL)
+						urls = append(urls, s.(*domain.Milestone).URL)
 					}
 				}
 
