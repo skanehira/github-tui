@@ -201,12 +201,13 @@ func (ui *SelectUI) toggleSelected(row int) {
 	} else {
 		data = ui.items[row]
 	}
+	selectColor := ui.items[0].Fields()[0].Color
 	if _, ok := ui.selected[data.Key()]; ok {
 		delete(ui.selected, data.Key())
-		ui.SetCell(row, 0, tview.NewTableCell(unselected).SetTextColor(ui.boxColor))
+		ui.SetCell(row, 0, tview.NewTableCell(unselected).SetTextColor(selectColor))
 	} else {
 		ui.selected[data.Key()] = data
-		ui.SetCell(row, 0, tview.NewTableCell(selected).SetTextColor(ui.boxColor))
+		ui.SetCell(row, 0, tview.NewTableCell(selected).SetTextColor(selectColor))
 	}
 }
 
