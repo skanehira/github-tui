@@ -5,34 +5,44 @@ import (
 	"github.com/rivo/tview"
 )
 
-var FilterUI *filterUI
+var IssueFilterUI *FilterUI
 
-var (
-	filterQuery string
+type (
+	SetFilterOpt func(ui *FilterUI)
+	FilterUI     struct {
+		*tview.Form
+	}
 )
 
-type filterUI struct {
-	*tview.Form
-}
-
 func NewFilterUI() {
-	ui := &filterUI{
-		Form: tview.NewForm().AddInputField("Filters", filterQuery, 100, nil, nil),
+	ui := &FilterUI{
+		Form: tview.NewForm().AddInputField("Filters", "", 100, nil, nil),
 	}
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEnter:
-			filterQuery = ui.GetFormItem(0).(*tview.InputField).GetText()
 			go IssueUI.GetList()
 		}
 		return event
 	})
-	FilterUI = ui
+	IssueFilterUI = ui
 }
 
-func (ui *filterUI) focus() {
+func (ui *FilterUI) GetInputField() *tview.InputField {
+	return ui.GetFormItem(0).(*tview.InputField)
 }
 
-func (ui *filterUI) blur() {
+func (ui *FilterUI) SetQuery(query string) {
+	ui.GetInputField().SetText(query)
+}
+
+func (ui *FilterUI) GetQuery() string {
+	return ui.GetInputField().GetText()
+}
+
+func (ui *FilterUI) focus() {
+}
+
+func (ui *FilterUI) blur() {
 }

@@ -61,6 +61,7 @@ func (ui *ui) toPrevUI() {
 }
 
 func (ui *ui) Start() error {
+	NewFilterUI()
 	NewViewUI("issue preview")
 	NewViewUI("comment preview")
 	NewIssueUI()
@@ -68,10 +69,9 @@ func (ui *ui) Start() error {
 	NewMilestoneUI()
 	NewProjectUI()
 	NewAssignableUI()
-	NewFilterUI()
 	NewCommentUI()
 
-	ui.primitives = []Primitive{FilterUI, AssigneesUI, LabelUI, MilestoneUI,
+	ui.primitives = []Primitive{IssueFilterUI, AssigneesUI, LabelUI, MilestoneUI,
 		ProjectUI, IssueUI, IssueViewUI, CommentUI, CommentViewUI}
 	ui.primitiveLen = len(ui.primitives)
 
@@ -79,7 +79,7 @@ func (ui *ui) Start() error {
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
 	grid := tview.NewGrid().SetRows(3).
-		AddItem(FilterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
+		AddItem(IssueFilterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
 		AddItem(IssueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
 		AddItem(AssigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
 		AddItem(LabelUI, row+2, col, rowSpan+1, colSpan+1, 0, 0, true).

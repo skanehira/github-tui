@@ -52,17 +52,23 @@ var IssueUI *SelectUI
 
 func NewIssueUI() {
 	opt := func(ui *SelectUI) {
+		// initial query
 		queries := []string{
 			fmt.Sprintf("repo:%s/%s", config.GitHub.Owner, config.GitHub.Repo),
-			"is:issue",
 			"state:open",
 		}
 
-		filterQuery = strings.Join(queries, " ")
+		IssueFilterUI.SetQuery(strings.Join(queries, " "))
 
 		ui.getList = func(cursor *string) ([]Item, *github.PageInfo) {
-			queries := queries
-			for _, q := range strings.Split(filterQuery, " ") {
+			var queries []string
+			query := IssueFilterUI.GetQuery()
+
+			if !strings.Contains(query, "is:issue") {
+				queries = append(queries, "is:issue")
+			}
+
+			for _, q := range strings.Split(query, " ") {
 				// execlude Pull request
 				if strings.Contains(q, "type:pr") || strings.Contains(q, "is:pr") {
 					continue
@@ -70,7 +76,8 @@ func NewIssueUI() {
 
 				queries = append(queries, q)
 			}
-			query := strings.Join(queries, " ")
+			query = strings.Join(queries, " ")
+			IssueFilterUI.SetQuery(query)
 
 			v := map[string]interface{}{
 				"query":  githubv4.String(query),
