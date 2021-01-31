@@ -136,7 +136,11 @@ func (ui *SelectUI) UpdateView() {
 
 		// when update filter, then update ui related issue primitives
 		if ui.uiKind == UIKindIssue {
-			updateUIRelatedIssue(ui, 1)
+			row, _ := ui.GetSelection()
+			if row == 0 {
+				row = 1
+			}
+			updateUIRelatedIssue(ui, row)
 		}
 	}
 }
