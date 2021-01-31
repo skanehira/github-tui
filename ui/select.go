@@ -29,7 +29,6 @@ type (
 	SetSelectUIOpt func(ui *SelectUI)
 	GetListFunc    func(cursor *string) ([]domain.Item, *github.PageInfo)
 	CaptureFunc    func(event *tcell.EventKey) *tcell.EventKey
-	InitFunc       func(ui *SelectUI)
 )
 
 type SelectUI struct {
@@ -38,7 +37,6 @@ type SelectUI struct {
 	hasNext   bool
 	getList   GetListFunc
 	capture   CaptureFunc
-	init      InitFunc
 	header    []string
 	hasHeader bool
 	items     []domain.Item
@@ -184,10 +182,6 @@ func (ui *SelectUI) Init() {
 
 		return ui.capture(event)
 	})
-
-	if ui.init != nil {
-		ui.init(ui)
-	}
 }
 
 func (ui *SelectUI) toggleSelected(row int) {
