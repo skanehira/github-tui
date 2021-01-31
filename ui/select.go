@@ -118,6 +118,7 @@ func (ui *SelectUI) UpdateView() {
 		h := 0
 		if ui.hasHeader {
 			h++
+			ui.SetFixed(1, 0)
 		}
 
 		selectColor := ui.items[0].Fields()[0].Color
