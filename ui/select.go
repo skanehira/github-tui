@@ -15,12 +15,12 @@ const (
 type UIKind string
 
 const (
-	UIKindIssue       UIKind = "issue list"
-	UIKindAssignee           = "assignable user list"
-	UIKindComment            = "comment list"
-	UIKindLabel              = "label list"
-	UIKindMilestones         = "milestone list"
-	UIKindProject            = "project list"
+	UIKindIssue       UIKind = "issus"
+	UIKindAssignee           = "assignees"
+	UIKindComment            = "comments"
+	UIKindLabel              = "labels"
+	UIKindMilestones         = "milestones"
+	UIKindProject            = "projects"
 	UIKindIssueView          = "issue preview"
 	UIKindCommentView        = "comment preview"
 )
