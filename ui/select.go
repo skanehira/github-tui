@@ -87,7 +87,7 @@ func (ui *SelectUI) SetList(list []domain.Item) {
 }
 
 func (ui *SelectUI) FetchList() {
-	if ui.hasNext {
+	if ui.hasNext && ui.getList != nil {
 		list, pageInfo := ui.getList(ui.cursor)
 		ui.hasNext = bool(pageInfo.HasNextPage)
 		cursor := string(pageInfo.EndCursor)
