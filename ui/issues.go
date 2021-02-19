@@ -62,23 +62,26 @@ func NewIssueUI() {
 			return issues, &resp.PageInfo
 		}
 
+		getSelectedIssues := func() []*domain.Issue {
+			var issues []*domain.Issue
+			if len(IssueUI.selected) == 0 {
+				data := IssueUI.GetSelect()
+				if data != nil {
+					issues = append(issues, data.(*domain.Issue))
+				}
+			} else {
+				for _, item := range IssueUI.selected {
+					issues = append(issues, item.(*domain.Issue))
+				}
+			}
+			return issues
+		}
+
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
 			case tcell.KeyCtrlO:
-				var urls []string
-				if len(IssueUI.selected) == 0 {
-					data := IssueUI.GetSelect()
-					if data != nil {
-						urls = append(urls, data.(*domain.Issue).URL)
-					}
-				} else {
-					for _, s := range IssueUI.selected {
-						urls = append(urls, s.(*domain.Issue).URL)
-					}
-				}
-
-				for _, url := range urls {
-					if err := utils.OpenBrowser(url); err != nil {
+				for _, issue := range getSelectedIssues() {
+					if err := utils.OpenBrowser(issue.URL); err != nil {
 						log.Println(err)
 					}
 				}
