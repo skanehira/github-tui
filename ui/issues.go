@@ -91,6 +91,7 @@ func NewIssueUI() {
 				if err := clipboard.WriteAll(url); err != nil {
 					log.Println(err)
 				}
+				IssueUI.ClearSelected()
 			case 'o':
 				go func() {
 					var wg sync.WaitGroup
@@ -106,6 +107,7 @@ func NewIssueUI() {
 						}(issue)
 					}
 					wg.Wait()
+					IssueUI.ClearSelected()
 					IssueUI.UpdateView()
 				}()
 			case 'c':
@@ -123,6 +125,7 @@ func NewIssueUI() {
 						}(issue)
 					}
 					wg.Wait()
+					IssueUI.ClearSelected()
 					IssueUI.UpdateView()
 				}()
 			}

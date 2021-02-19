@@ -222,5 +222,9 @@ func (ui *SelectUI) blur() {
 
 func (ui *SelectUI) ClearView() {
 	ui.Clear()
+	ui.ClearSelected()
+}
+
+func (ui *SelectUI) ClearSelected() {
 	ui.selected = make(map[string]domain.Item)
 }
