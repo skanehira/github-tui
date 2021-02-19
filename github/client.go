@@ -55,6 +55,15 @@ func ReopenIssue(id string) error {
 	return client.Mutate(context.Background(), &m, input, nil)
 }
 
+func CloseIssue(id string) error {
+	input := githubv4.CloseIssueInput{
+		IssueID: githubv4.String(id),
+	}
+
+	var m MutateCoseIssue
+	return client.Mutate(context.Background(), &m, input, nil)
+}
+
 func GetRepoLabels(variables map[string]interface{}) (*Labels, error) {
 	var q struct {
 		Repository struct {

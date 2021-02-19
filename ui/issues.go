@@ -97,6 +97,23 @@ func NewIssueUI() {
 					wg.Wait()
 					IssueUI.UpdateView()
 				}()
+			case 'c':
+				go func() {
+					var wg sync.WaitGroup
+					for _, issue := range getSelectedIssues() {
+						wg.Add(1)
+						go func(issue *domain.Issue) {
+							defer wg.Done()
+							if err := github.CloseIssue(issue.ID); err != nil {
+								log.Println(err)
+								return
+							}
+							issue.State = "CLOSED"
+						}(issue)
+					}
+					wg.Wait()
+					IssueUI.UpdateView()
+				}()
 			}
 			switch event.Key() {
 			case tcell.KeyCtrlO:
