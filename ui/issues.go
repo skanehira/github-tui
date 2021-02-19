@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
@@ -78,6 +79,25 @@ func NewIssueUI() {
 		}
 
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
+			switch event.Rune() {
+			case 'o':
+				go func() {
+					var wg sync.WaitGroup
+					for _, issue := range getSelectedIssues() {
+						wg.Add(1)
+						go func(issue *domain.Issue) {
+							defer wg.Done()
+							if err := github.ReopenIssue(issue.ID); err != nil {
+								log.Println(err)
+								return
+							}
+							issue.State = "OPEN"
+						}(issue)
+					}
+					wg.Wait()
+					IssueUI.UpdateView()
+				}()
+			}
 			switch event.Key() {
 			case tcell.KeyCtrlO:
 				for _, issue := range getSelectedIssues() {
