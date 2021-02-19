@@ -81,7 +81,7 @@ func NewIssueUI() {
 			switch event.Key() {
 			case tcell.KeyCtrlO:
 				for _, issue := range getSelectedIssues() {
-					if err := utils.OpenBrowser(issue.URL); err != nil {
+					if err := utils.Open(issue.URL); err != nil {
 						log.Println(err)
 					}
 				}

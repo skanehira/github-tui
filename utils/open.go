@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func OpenBrowser(url string) error {
+func Open(url string) error {
 	args := []string{}
 	switch runtime.GOOS {
 	case "windows":

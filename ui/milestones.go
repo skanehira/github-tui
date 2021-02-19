@@ -51,7 +51,7 @@ func NewMilestoneUI() {
 				}
 
 				for _, url := range urls {
-					if err := utils.OpenBrowser(url); err != nil {
+					if err := utils.Open(url); err != nil {
 						log.Println(err)
 					}
 				}

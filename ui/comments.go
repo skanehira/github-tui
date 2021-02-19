@@ -17,14 +17,14 @@ func NewCommentUI() {
 			case tcell.KeyCtrlO:
 				for _, s := range CommentUI.selected {
 					comment := s.(*domain.Comment)
-					if err := utils.OpenBrowser(comment.URL); err != nil {
+					if err := utils.Open(comment.URL); err != nil {
 						log.Println(err)
 					}
 				}
 				if len(CommentUI.selected) == 0 {
 					data := CommentUI.GetSelect()
 					if data != nil {
-						if err := utils.OpenBrowser(data.(*domain.Comment).URL); err != nil {
+						if err := utils.Open(data.(*domain.Comment).URL); err != nil {
 							log.Println(err)
 						}
 					}
