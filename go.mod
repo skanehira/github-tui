@@ -3,6 +3,7 @@ module github.com/skanehira/ght
 go 1.15
 
 require (
+	github.com/atotto/clipboard v0.1.2
 	github.com/charmbracelet/glamour v0.2.0
 	github.com/gdamore/tcell/v2 v2.1.0
 	github.com/goccy/go-yaml v1.8.3

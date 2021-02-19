@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/atotto/clipboard"
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
 	"github.com/skanehira/ght/config"
@@ -80,6 +81,16 @@ func NewIssueUI() {
 
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Rune() {
+			case 'y':
+				var urls []string
+				for _, issue := range getSelectedIssues() {
+					urls = append(urls, issue.URL)
+				}
+
+				url := strings.Join(urls, "\n")
+				if err := clipboard.WriteAll(url); err != nil {
+					log.Println(err)
+				}
 			case 'o':
 				go func() {
 					var wg sync.WaitGroup
