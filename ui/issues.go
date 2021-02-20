@@ -162,7 +162,7 @@ func NewIssueUI() {
 }
 
 func updateUIRelatedIssue(ui *SelectUI, row int) {
-	if row > 0 {
+	if row > 0 && row < len(ui.items) {
 		issue := ui.items[row-1].(*domain.Issue)
 		IssueViewUI.updateView(issue.Body)
 

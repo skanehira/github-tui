@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"strings"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/skanehira/ght/domain"
@@ -32,16 +34,18 @@ type (
 )
 
 type SelectUI struct {
-	uiKind    UIKind
-	cursor    *string
-	hasNext   bool
-	getList   GetListFunc
-	capture   CaptureFunc
-	header    []string
-	hasHeader bool
-	items     []domain.Item
-	selected  map[string]domain.Item
-	boxColor  tcell.Color
+	uiKind      UIKind
+	cursor      *string
+	hasNext     bool
+	getList     GetListFunc
+	capture     CaptureFunc
+	header      []string
+	hasHeader   bool
+	originItems []domain.Item
+	items       []domain.Item
+	selected    map[string]domain.Item
+	boxColor    tcell.Color
+	searchWord  string
 	*tview.Table
 }
 
@@ -69,7 +73,7 @@ func (ui *SelectUI) GetList() {
 		if pageInfo != nil {
 			ui.hasNext = bool(pageInfo.HasNextPage)
 			cursor := string(pageInfo.EndCursor)
-			ui.items = list
+			ui.originItems = list
 			ui.cursor = &cursor
 			ui.Select(0, 0)
 			ui.UpdateView()
@@ -78,7 +82,7 @@ func (ui *SelectUI) GetList() {
 }
 
 func (ui *SelectUI) SetList(list []domain.Item) {
-	ui.items = list
+	ui.originItems = list
 	ui.selected = make(map[string]domain.Item)
 	ui.Select(0, 0)
 	ui.UpdateView()
@@ -89,7 +93,7 @@ func (ui *SelectUI) FetchList() {
 		list, pageInfo := ui.getList(ui.cursor)
 		ui.hasNext = bool(pageInfo.HasNextPage)
 		cursor := string(pageInfo.EndCursor)
-		ui.items = append(ui.items, list...)
+		ui.originItems = append(ui.originItems, list...)
 		ui.cursor = &cursor
 		ui.UpdateView()
 	}
@@ -109,7 +113,7 @@ func (ui *SelectUI) UpdateView() {
 			})
 		}
 
-		if len(ui.items) < 1 {
+		if len(ui.originItems) < 1 {
 			return
 		}
 
@@ -119,7 +123,21 @@ func (ui *SelectUI) UpdateView() {
 			ui.SetFixed(1, 0)
 		}
 
-		selectColor := ui.items[0].Fields()[0].Color
+		selectColor := ui.originItems[0].Fields()[0].Color
+
+		ui.items = []domain.Item{}
+		if ui.searchWord != "" {
+			for _, data := range ui.originItems {
+				for _, f := range data.Fields() {
+					if strings.Contains(strings.ToLower(f.Text), strings.ToLower(ui.searchWord)) {
+						ui.items = append(ui.items, data)
+						break
+					}
+				}
+			}
+		} else {
+			ui.items = ui.originItems
+		}
 
 		for i, data := range ui.items {
 			if _, ok := ui.selected[data.Key()]; ok {
@@ -146,6 +164,12 @@ func (ui *SelectUI) UpdateView() {
 
 func (ui *SelectUI) Init() {
 	ui.GetList()
+
+	searchFunc := func(text string) {
+		ui.searchWord = text
+		ui.UpdateView()
+	}
+
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlJ:
@@ -178,6 +202,12 @@ func (ui *SelectUI) Init() {
 		switch event.Rune() {
 		case 'G':
 			go ui.FetchList()
+		case '/':
+			SearchUI.SetSerachFunc(searchFunc)
+			SearchUI.SetFocusFunc(func() {
+				UI.app.SetFocus(ui)
+			})
+			UI.app.SetFocus(SearchUI)
 		}
 
 		return ui.capture(event)
