@@ -70,6 +70,7 @@ func (ui *ui) Start() error {
 	NewProjectUI()
 	NewAssignableUI()
 	NewCommentUI()
+	NewSearchUI()
 
 	ui.primitives = []Primitive{IssueFilterUI, AssigneesUI, LabelUI, MilestoneUI,
 		ProjectUI, IssueUI, IssueViewUI, CommentUI, CommentViewUI}
@@ -78,16 +79,17 @@ func (ui *ui) Start() error {
 	// for readability
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
-	grid := tview.NewGrid().SetRows(3).
+	grid := tview.NewGrid().SetRows(3, 0, 0, 0, 0, 0, 0, 0, 0, 1).
 		AddItem(IssueFilterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
 		AddItem(IssueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
 		AddItem(AssigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
 		AddItem(LabelUI, row+2, col, rowSpan+1, colSpan+1, 0, 0, true).
 		AddItem(MilestoneUI, row+3, col, rowSpan+1, colSpan+1, 0, 0, true).
 		AddItem(ProjectUI, row+4, col, rowSpan+1, colSpan+1, 0, 0, true).
-		AddItem(CommentUI, row+5, col, rowSpan+3, colSpan+4, 0, 0, true).
+		AddItem(CommentUI, row+5, col, rowSpan+4, colSpan+4, 0, 0, true).
 		AddItem(IssueViewUI, row+1, col+4, rowSpan+4, colSpan+3, 0, 0, true).
-		AddItem(CommentViewUI, row+5, col+4, rowSpan+3, colSpan+3, 0, 0, true)
+		AddItem(CommentViewUI, row+5, col+4, rowSpan+4, colSpan+3, 0, 0, true).
+		AddItem(SearchUI, row+9, col, rowSpan+1, colSpan+7, 0, 0, true)
 
 	ui.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
