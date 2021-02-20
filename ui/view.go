@@ -53,11 +53,15 @@ func NewViewUI(uiKind UIKind) {
 			})
 			UI.app.SetFocus(SearchUI)
 		case 'n':
-			ui.regionIndex = (ui.regionIndex + 1) % ui.regionLength
-			ui.Highlight(strconv.Itoa(ui.regionIndex)).ScrollToHighlight()
+			if ui.regionLength > 0 {
+				ui.regionIndex = (ui.regionIndex + 1) % ui.regionLength
+				ui.Highlight(strconv.Itoa(ui.regionIndex)).ScrollToHighlight()
+			}
 		case 'N':
-			ui.regionIndex = (ui.regionIndex - 1 + ui.regionLength) % ui.regionLength
-			ui.Highlight(strconv.Itoa(ui.regionIndex)).ScrollToHighlight()
+			if ui.regionLength > 0 {
+				ui.regionIndex = (ui.regionIndex - 1 + ui.regionLength) % ui.regionLength
+				ui.Highlight(strconv.Itoa(ui.regionIndex)).ScrollToHighlight()
+			}
 		}
 		switch event.Key() {
 		case tcell.KeyCtrlO:
