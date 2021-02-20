@@ -18,6 +18,7 @@ func (a *AssignableUser) ToDomain() *domain.AssignableUser {
 
 type AssignableUsers struct {
 	Nodes []struct {
+		ID    githubv4.ID
 		Login githubv4.String
 	}
 	PageInfo PageInfo

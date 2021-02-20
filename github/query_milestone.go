@@ -6,7 +6,7 @@ import (
 )
 
 type Milestone struct {
-	ID          githubv4.String
+	ID          githubv4.ID
 	Title       githubv4.String
 	State       githubv4.String
 	Description githubv4.String
@@ -15,7 +15,7 @@ type Milestone struct {
 
 func (m *Milestone) ToDomain() *domain.Milestone {
 	milestone := &domain.Milestone{
-		ID:          string(m.ID),
+		ID:          m.ID.(string),
 		Title:       string(m.Title),
 		State:       string(m.State),
 		Description: string(m.Description),

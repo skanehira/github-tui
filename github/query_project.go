@@ -6,6 +6,7 @@ import (
 )
 
 type Project struct {
+	ID   githubv4.ID
 	Name githubv4.String
 	URL  githubv4.URI
 }

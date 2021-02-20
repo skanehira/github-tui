@@ -6,6 +6,7 @@ import (
 )
 
 type Label struct {
+	ID          githubv4.ID
 	Name        githubv4.String
 	Description githubv4.String
 	Color       githubv4.String

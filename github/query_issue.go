@@ -11,6 +11,7 @@ import (
 type Issue struct {
 	ID         githubv4.String
 	Repository struct {
+		ID   githubv4.String
 		Name githubv4.String
 	}
 	Number githubv4.Int
@@ -83,4 +84,11 @@ type Issues struct {
 		Issue Issue `graphql:"... on Issue"`
 	}
 	PageInfo PageInfo
+}
+
+type IssueTemplate struct {
+	About githubv4.String
+	Body  githubv4.String
+	Name  githubv4.String
+	Title githubv4.String
 }

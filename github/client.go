@@ -17,6 +17,11 @@ func NewClient(token string) {
 	client = githubv4.NewClient(httpClient)
 }
 
+func CreateIssue(input githubv4.CreateIssueInput) error {
+	var m MutateCreateIssue
+	return client.Mutate(context.Background(), &m, input, nil)
+}
+
 func GetRepos(variables map[string]interface{}) (*Repositories, error) {
 	var q struct {
 		RepositoryOwner struct {
@@ -28,6 +33,16 @@ func GetRepos(variables map[string]interface{}) (*Repositories, error) {
 		return nil, err
 	}
 	return &q.RepositoryOwner.Repositories, nil
+}
+
+func GetRepo(variables map[string]interface{}) (*Repository, error) {
+	var q struct {
+		Repository `graphql:"repository(owner: $owner, name: $name)"`
+	}
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return &q.Repository, nil
 }
 
 func GetIssue(variables map[string]interface{}) (*Issues, error) {
@@ -43,6 +58,18 @@ func GetIssue(variables map[string]interface{}) (*Issues, error) {
 		PageInfo: q.Search.PageInfo,
 	}
 	return issues, nil
+}
+
+func GetIssueTemplates(variables map[string]interface{}) ([]IssueTemplate, error) {
+	var q struct {
+		Repository struct {
+			IssueTemplates []IssueTemplate
+		} `graphql:"repository(name: $name, owner: $owner)"`
+	}
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return q.Repository.IssueTemplates, nil
 }
 
 func ReopenIssue(id string) error {
