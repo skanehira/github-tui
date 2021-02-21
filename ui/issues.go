@@ -475,9 +475,7 @@ func createIssueForm() {
 			for _, name := range strings.Split(text, ",") {
 				labelIDs = append(labelIDs, labelMap[name])
 			}
-			if len(labelIDs) > 0 {
-				input.LabelIDs = &labelIDs
-			}
+			input.LabelIDs = &labelIDs
 		}
 
 		// get projects
@@ -486,9 +484,7 @@ func createIssueForm() {
 			for _, name := range strings.Split(text, ",") {
 				projectIDs = append(projectIDs, projectMap[name])
 			}
-			if len(projectIDs) > 0 {
-				input.ProjectIDs = &projectIDs
-			}
+			input.ProjectIDs = &projectIDs
 		}
 
 		body := githubv4.String(issueBody)
