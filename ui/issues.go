@@ -218,7 +218,9 @@ func createIssueForm() {
 		"name":  githubv4.String(name),
 	})
 	if err != nil {
-		log.Println(err)
+		UI.Message(err.Error(), func() {
+			UI.app.SetFocus(IssueUI)
+		})
 		return
 	}
 	repoID = resp.ID
@@ -504,7 +506,9 @@ func createIssueForm() {
 		input.Body = &body
 
 		if err := github.CreateIssue(input); err != nil {
-			log.Println(err)
+			UI.Message(err.Error(), func() {
+				UI.pages.SwitchToPage("form").ShowPage("main")
+			})
 		} else {
 			UI.pages.RemovePage("form").ShowPage("main")
 			UI.app.SetFocus(IssueUI)

@@ -85,6 +85,17 @@ func (ui *ui) Modal(p tview.Primitive, width, height int) tview.Primitive {
 		AddItem(p, 1, 1, 1, 1, 0, 0, true)
 }
 
+func (ui *ui) Message(msg string, focusFunc func()) {
+	modal := tview.NewModal().
+		SetText(msg).
+		AddButtons([]string{"OK"}).
+		SetDoneFunc(func(_ int, _ string) {
+			ui.pages.RemovePage("message").ShowPage("main")
+			focusFunc()
+		})
+	ui.pages.AddAndSwitchToPage("message", ui.Modal(modal, 80, 29), true).ShowPage("main")
+}
+
 func (ui *ui) Start() error {
 	NewFilterUI()
 	NewViewUI(UIKindIssueView)
