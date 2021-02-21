@@ -70,83 +70,20 @@ func NewIssueUI() {
 			return issues, &resp.PageInfo
 		}
 
-		getSelectedIssues := func() []*domain.Issue {
-			var issues []*domain.Issue
-			if len(IssueUI.selected) == 0 {
-				data := IssueUI.GetSelect()
-				if data != nil {
-					issues = append(issues, data.(*domain.Issue))
-				}
-			} else {
-				for _, item := range IssueUI.selected {
-					issues = append(issues, item.(*domain.Issue))
-				}
-			}
-			return issues
-		}
-
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Rune() {
 			case 'y':
-				var urls []string
-				for _, issue := range getSelectedIssues() {
-					urls = append(urls, issue.URL)
-				}
-
-				url := strings.Join(urls, "\n")
-				if err := clipboard.WriteAll(url); err != nil {
-					log.Println(err)
-				}
-				IssueUI.ClearSelected()
-				IssueUI.UpdateView()
+				yankIssueURLs()
 			case 'o':
-				go func() {
-					var wg sync.WaitGroup
-					for _, issue := range getSelectedIssues() {
-						wg.Add(1)
-						go func(issue *domain.Issue) {
-							defer wg.Done()
-							if err := github.ReopenIssue(issue.ID); err != nil {
-								log.Println(err)
-								return
-							}
-							issue.State = "OPEN"
-						}(issue)
-					}
-					wg.Wait()
-					IssueUI.ClearSelected()
-					IssueUI.UpdateView()
-				}()
+				go openIssues()
 			case 'c':
-				go func() {
-					var wg sync.WaitGroup
-					for _, issue := range getSelectedIssues() {
-						wg.Add(1)
-						go func(issue *domain.Issue) {
-							defer wg.Done()
-							if err := github.CloseIssue(issue.ID); err != nil {
-								log.Println(err)
-								return
-							}
-							issue.State = "CLOSED"
-						}(issue)
-					}
-					wg.Wait()
-					IssueUI.ClearSelected()
-					IssueUI.UpdateView()
-				}()
+				go closeIssues()
 			case 'n':
-				createIssueForm()
+				go createIssueForm()
 			}
 			switch event.Key() {
 			case tcell.KeyCtrlO:
-				for _, issue := range getSelectedIssues() {
-					if err := utils.Open(issue.URL); err != nil {
-						log.Println(err)
-					}
-				}
-				IssueUI.ClearSelected()
-				IssueUI.UpdateView()
+				openBrowser()
 			}
 
 			return event
@@ -171,6 +108,82 @@ func NewIssueUI() {
 	})
 
 	IssueUI = ui
+}
+
+func getSelectedIssues() []*domain.Issue {
+	var issues []*domain.Issue
+	if len(IssueUI.selected) == 0 {
+		data := IssueUI.GetSelect()
+		if data != nil {
+			issues = append(issues, data.(*domain.Issue))
+		}
+	} else {
+		for _, item := range IssueUI.selected {
+			issues = append(issues, item.(*domain.Issue))
+		}
+	}
+	return issues
+}
+
+func yankIssueURLs() {
+	var urls []string
+	for _, issue := range getSelectedIssues() {
+		urls = append(urls, issue.URL)
+	}
+
+	url := strings.Join(urls, "\n")
+	if err := clipboard.WriteAll(url); err != nil {
+		log.Println(err)
+	}
+	IssueUI.ClearSelected()
+	IssueUI.UpdateView()
+}
+
+func openIssues() {
+	var wg sync.WaitGroup
+	for _, issue := range getSelectedIssues() {
+		wg.Add(1)
+		go func(issue *domain.Issue) {
+			defer wg.Done()
+			if err := github.ReopenIssue(issue.ID); err != nil {
+				log.Println(err)
+				return
+			}
+			issue.State = "OPEN"
+		}(issue)
+	}
+	wg.Wait()
+	IssueUI.ClearSelected()
+	IssueUI.UpdateView()
+}
+
+func closeIssues() {
+	var wg sync.WaitGroup
+	for _, issue := range getSelectedIssues() {
+		wg.Add(1)
+		go func(issue *domain.Issue) {
+			defer wg.Done()
+			if err := github.CloseIssue(issue.ID); err != nil {
+				log.Println(err)
+				return
+			}
+			issue.State = "CLOSED"
+		}(issue)
+	}
+	wg.Wait()
+	IssueUI.ClearSelected()
+	IssueUI.UpdateView()
+}
+
+func openBrowser() {
+	for _, issue := range getSelectedIssues() {
+		if err := utils.Open(issue.URL); err != nil {
+			log.Println(err)
+		}
+	}
+	IssueUI.ClearSelected()
+	IssueUI.UpdateView()
+
 }
 
 func createIssueForm() {
