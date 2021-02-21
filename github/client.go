@@ -159,3 +159,8 @@ func DeleteIssueComment(id string) error {
 	}
 	return client.Mutate(context.Background(), &m, input, nil)
 }
+
+func UpdateIssue(input githubv4.UpdateIssueInput) error {
+	var m MutateUpdateIssue
+	return client.Mutate(context.Background(), &m, input, nil)
+}

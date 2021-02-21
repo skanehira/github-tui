@@ -15,6 +15,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - open
   - open browser
   - preview
+  - edit
 - Issue comment
   - list
   - preview
@@ -22,7 +23,6 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
 
 ### Still Under Development
 - Issue
-  - edit
   - add assignees, labels, projects, milestone
   - remove assignees, labels, projects, milestone
 - Issue comment

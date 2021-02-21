@@ -25,3 +25,11 @@ type MutateCreateIssue struct {
 		}
 	} `graphql:"createIssue(input: $input)"`
 }
+
+type MutateUpdateIssue struct {
+	UpdateIssue struct {
+		Issue struct {
+			ID githubv4.ID
+		}
+	} `graphql:"updateIssue(input: $input)"`
+}

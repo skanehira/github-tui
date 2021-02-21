@@ -2,11 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
-	"os"
-	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -80,6 +76,8 @@ func NewIssueUI() {
 				go closeIssues()
 			case 'n':
 				createIssueForm()
+			case 'e':
+				editIssue()
 			}
 			switch event.Key() {
 			case tcell.KeyCtrlO:
@@ -434,40 +432,10 @@ func createIssueForm() {
 
 	form.AddButton("Edit Body", func() {
 		UI.app.Suspend(func() {
-			f, err := ioutil.TempFile("", "")
-			if err != nil {
+			if err := utils.Edit(&issueBody); err != nil {
 				log.Println(err)
 				return
 			}
-			defer os.Remove(f.Name())
-
-			if issueBody != "" {
-				if _, err := io.Copy(f, strings.NewReader(issueBody)); err != nil {
-					log.Println(err)
-				}
-			}
-			f.Close()
-
-			editor := os.Getenv("EDITOR")
-			if editor == "" {
-				editor = "vim"
-			}
-			cmd := exec.Command(editor, f.Name())
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			if err := cmd.Run(); err != nil {
-				log.Println(err)
-				return
-			}
-
-			b, err := ioutil.ReadFile(f.Name())
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			issueBody = string(b)
 		})
 	})
 	form.AddButton("Create", func() {
@@ -537,6 +505,44 @@ func createIssueForm() {
 	})
 
 	UI.pages.AddAndSwitchToPage("form", UI.Modal(form, 100, 19), true).ShowPage("main")
+}
+
+func editIssue() {
+	item := IssueUI.GetSelect()
+	if item == nil {
+		return
+	}
+	issue := item.(*domain.Issue)
+
+	focus := func() {
+		UI.app.SetFocus(IssueUI)
+	}
+
+	var err error
+	old := issue.Body
+	UI.app.Suspend(func() {
+		err = utils.Edit(&issue.Body)
+	})
+	if err != nil {
+		UI.Message(err.Error(), focus)
+		return
+	}
+
+	// if issue body not edited do nothing
+	if old == issue.Body {
+		return
+	}
+
+	input := githubv4.UpdateIssueInput{
+		ID:   githubv4.ID(issue.ID),
+		Body: githubv4.NewString(githubv4.String(issue.Body)),
+	}
+	if err := github.UpdateIssue(input); err != nil {
+		UI.Message(err.Error(), focus)
+		return
+	}
+
+	IssueViewUI.updateView(issue.Body)
 }
 
 func updateUIRelatedIssue(ui *SelectUI, row int) {
