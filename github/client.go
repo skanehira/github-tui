@@ -45,7 +45,7 @@ func GetRepo(variables map[string]interface{}) (*Repository, error) {
 	return &q.Repository, nil
 }
 
-func GetIssue(variables map[string]interface{}) (*Issues, error) {
+func GetIssues(variables map[string]interface{}) (*Issues, error) {
 	var q struct {
 		Search Issues `graphql:"search(query: $query, type: ISSUE, first: $first, after: $cursor)"`
 	}
@@ -58,6 +58,19 @@ func GetIssue(variables map[string]interface{}) (*Issues, error) {
 		PageInfo: q.Search.PageInfo,
 	}
 	return issues, nil
+}
+
+func GetIssue(variables map[string]interface{}) (*Issue, error) {
+	var q struct {
+		Repository struct {
+			Issue *Issue `graphql:"issue(number: $number)"`
+		} `graphql:"repository(owner: $owner, name: $name)"`
+	}
+
+	if err := client.Query(context.Background(), &q, variables); err != nil {
+		return nil, err
+	}
+	return q.Repository.Issue, nil
 }
 
 func GetIssueTemplates(variables map[string]interface{}) ([]IssueTemplate, error) {
@@ -137,4 +150,12 @@ func GetRepoAssignableUsers(variables map[string]interface{}) (*AssignableUsers,
 		return nil, err
 	}
 	return &q.Repository.AssignableUsers, nil
+}
+
+func DeleteIssueComment(id string) error {
+	var m MutationDeleteComment
+	input := githubv4.DeleteIssueCommentInput{
+		ID: githubv4.ID(id),
+	}
+	return client.Mutate(context.Background(), &m, input, nil)
 }

@@ -11,7 +11,10 @@ import (
 type Issue struct {
 	ID         githubv4.String
 	Repository struct {
-		ID   githubv4.String
+		ID    githubv4.String
+		Owner struct {
+			Login githubv4.String
+		}
 		Name githubv4.String
 	}
 	Number githubv4.Int
@@ -39,14 +42,15 @@ type Issue struct {
 
 func (i *Issue) ToDomain() *domain.Issue {
 	issue := &domain.Issue{
-		ID:     string(i.ID),
-		Repo:   string(i.Repository.Name),
-		Number: strconv.Itoa(int(i.Number)),
-		State:  string(i.State),
-		Author: string(i.Author.Login),
-		URL:    i.URL.String(),
-		Title:  string(i.Title),
-		Body:   string(i.Body),
+		ID:        string(i.ID),
+		Repo:      string(i.Repository.Name),
+		RepoOwner: string(i.Repository.Owner.Login),
+		Number:    strconv.Itoa(int(i.Number)),
+		State:     string(i.State),
+		Author:    string(i.Author.Login),
+		URL:       i.URL.String(),
+		Title:     string(i.Title),
+		Body:      string(i.Body),
 	}
 
 	labels := make([]domain.Item, len(i.Labels.Nodes))

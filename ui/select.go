@@ -231,13 +231,26 @@ func (ui *SelectUI) toggleSelected(row int) {
 	}
 }
 
+func (ui *SelectUI) UpdateItem(item domain.Item) {
+	for i, t := range ui.originItems {
+		if t.Key() == item.Key() {
+			ui.originItems[i] = item
+		}
+	}
+}
+
 func (ui *SelectUI) GetSelect() domain.Item {
 	row, _ := ui.GetSelection()
 	if ui.hasHeader {
 		row = row - 1
 	}
 	if len(ui.items) > row {
-		return ui.items[row]
+		id := ui.items[row].Key()
+		for _, item := range ui.originItems {
+			if item.Key() == id {
+				return item
+			}
+		}
 	}
 	return nil
 }

@@ -5,6 +5,7 @@ import "github.com/gdamore/tcell/v2"
 type Issue struct {
 	ID        string
 	Repo      string
+	RepoOwner string
 	Number    string
 	State     string
 	Title     string

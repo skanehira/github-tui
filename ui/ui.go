@@ -96,6 +96,24 @@ func (ui *ui) Message(msg string, focusFunc func()) {
 	ui.pages.AddAndSwitchToPage("message", ui.Modal(modal, 80, 29), true).ShowPage("main")
 }
 
+func (ui *ui) Confirm(msg, doLabel string, doFunc func() error, focusFunc func()) {
+	modal := tview.NewModal().
+		SetText(msg).
+		AddButtons([]string{doLabel, "Cancel"}).
+		SetDoneFunc(func(_ int, buttonLabel string) {
+			ui.pages.RemovePage("modal").ShowPage("main")
+			focusFunc()
+			if buttonLabel == doLabel {
+				if err := doFunc(); err != nil {
+					ui.Message(err.Error(), func() {
+						focusFunc()
+					})
+				}
+			}
+		})
+	ui.pages.AddAndSwitchToPage("modal", ui.Modal(modal, 80, 29), true).ShowPage("main")
+}
+
 func (ui *ui) Start() error {
 	NewFilterUI()
 	NewViewUI(UIKindIssueView)

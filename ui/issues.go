@@ -57,7 +57,7 @@ func NewIssueUI() {
 				"first":  githubv4.Int(30),
 				"cursor": (*githubv4.String)(cursor),
 			}
-			resp, err := github.GetIssue(v)
+			resp, err := github.GetIssues(v)
 			if err != nil {
 				log.Println(err)
 				return nil, nil

@@ -18,6 +18,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
 - Issue comment
   - list
   - preview
+  - delete
 
 ### Still Under Development
 - Issue
@@ -27,12 +28,11 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
 - Issue comment
   - edit
   - add
-  - remove
 - PR
   - list
   - edit comment
   - add comment
-  - remove comment
+  - delete comment
   - diff
   - create
   - close
