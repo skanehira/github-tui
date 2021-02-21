@@ -153,7 +153,7 @@ func GetRepoAssignableUsers(variables map[string]interface{}) (*AssignableUsers,
 }
 
 func DeleteIssueComment(id string) error {
-	var m MutationDeleteComment
+	var m MutateDeleteComment
 	input := githubv4.DeleteIssueCommentInput{
 		ID: githubv4.ID(id),
 	}
