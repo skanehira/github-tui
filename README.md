@@ -107,6 +107,7 @@ $ ght owner/repo
 | Issues   | `l`/`right arrow`    | Move right by one column.        |
 | Issues   | `Ctrl-J`             | Check issue and move down.       |
 | Issues   | `Ctrl-K`             | Check issue and move up.         |
+| Issues   | `e`                  | Edit and update issue body.      |
 | Issues   | `o`                  | Open checked issue.              |
 | Issues   | `c`                  | Close checked issue.             |
 | Issues   | `Ctrl-O`             | Open checked issue on browser.   |
