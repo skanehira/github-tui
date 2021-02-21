@@ -176,7 +176,7 @@ func NewIssueUI() {
 func createIssueForm() {
 	// repo
 	var repo string
-	input := IssueFilterUI.GetFormItem(0).(*tview.InputField).GetText()
+	input := IssueFilterUI.GetQuery()
 	for _, word := range strings.Split(input, " ") {
 		if strings.Contains(word, "repo:") {
 			repo = strings.TrimPrefix(word, "repo:")

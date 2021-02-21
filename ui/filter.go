@@ -10,14 +10,15 @@ var IssueFilterUI *FilterUI
 type (
 	SetFilterOpt func(ui *FilterUI)
 	FilterUI     struct {
-		*tview.Form
+		*tview.InputField
 	}
 )
 
 func NewFilterUI() {
 	ui := &FilterUI{
-		Form: tview.NewForm().AddInputField("Filters", "", 100, nil, nil),
+		InputField: tview.NewInputField().SetLabel("Filters").SetLabelWidth(8),
 	}
+	ui.SetBorderPadding(0, 0, 1, 0)
 
 	ui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -29,16 +30,12 @@ func NewFilterUI() {
 	IssueFilterUI = ui
 }
 
-func (ui *FilterUI) GetInputField() *tview.InputField {
-	return ui.GetFormItem(0).(*tview.InputField)
-}
-
 func (ui *FilterUI) SetQuery(query string) {
-	ui.GetInputField().SetText(query)
+	ui.SetText(query)
 }
 
 func (ui *FilterUI) GetQuery() string {
-	return ui.GetInputField().GetText()
+	return ui.GetText()
 }
 
 func (ui *FilterUI) focus() {

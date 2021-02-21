@@ -36,7 +36,22 @@ func New() *ui {
 	return ui
 }
 
+func (ui *ui) canFocus() bool {
+	fs := ui.app.GetFocus()
+	if fs == nil {
+		return false
+	}
+	switch fs.(type) {
+	case *FilterUI, *SelectUI, *viewUI:
+		return true
+	}
+	return false
+}
+
 func (ui *ui) toNextUI() {
+	if !ui.canFocus() {
+		return
+	}
 	ui.primitives[ui.current].blur()
 	if ui.primitiveLen-1 > ui.current {
 		ui.current++
@@ -49,6 +64,9 @@ func (ui *ui) toNextUI() {
 }
 
 func (ui *ui) toPrevUI() {
+	if !ui.canFocus() {
+		return
+	}
 	ui.primitives[ui.current].blur()
 	if ui.current == 0 {
 		ui.current = ui.primitiveLen - 1
@@ -86,7 +104,7 @@ func (ui *ui) Start() error {
 	// for readability
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
-	grid := tview.NewGrid().SetRows(3, 0, 0, 0, 0, 0, 0, 0, 0, 1).
+	grid := tview.NewGrid().SetRows(1, 0, 0, 0, 0, 0, 0, 0, 0, 1).
 		AddItem(IssueFilterUI, row, col, rowSpan+1, colSpan+3, 0, 0, true).
 		AddItem(IssueUI, row+1, col+1, rowSpan+4, colSpan+3, 0, 0, true).
 		AddItem(AssigneesUI, row+1, col, rowSpan+1, colSpan+1, 0, 0, true).
