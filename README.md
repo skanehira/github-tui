@@ -54,6 +54,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - move
   - open browser
 - config
+  - set default editor
   - set user keybinds
 
 ## Installation
@@ -117,6 +118,15 @@ $ ght owner/repo
 | Comments | `Ctrl-K`             | Check comment and move up.       |
 | Comments | `Ctrl-O`             | Open checked comment on browser. |
 | Comments | `/`                  | filter with inputed words        |
+
+### Note
+When you creating issue, you can specify multiple labels, projects and assignees with `,`.
+For instance, when you specify 2 labels then must input `label1,label2`.
+
+![](https://i.gyazo.com/fb665369057c5f096517a24e606e7884.png)
+
+When you edit issue body with `Edit Body` button then `$EDITOR` be used.
+If `$EDITOR` is emtpy or not set, `Vim` be used.
 
 ## Author
 skanehira
