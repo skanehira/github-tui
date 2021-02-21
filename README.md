@@ -13,6 +13,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - create
   - close
   - open
+  - open browser
   - preview
 - Issue comment
   - list
@@ -20,21 +21,30 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
 
 ### Still Under Development
 - Issue
+  - edit
   - add assignees, labels, projects, milestone
   - remove assignees, labels, projects, milestone
 - Issue comment
+  - edit
   - add
   - remove
 - PR
   - list
+  - edit comment
+  - add comment
+  - remove comment
+  - diff
   - create
   - close
+  - chanage base
   - merge
 - Github Actions
+  - re-run
   - list
   - log
 - File tree
-  - open
+  - preview
+  - open browser
   - preview
 - Project
   - columns
@@ -42,6 +52,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - add
   - remove
   - move
+  - open browser
 - config
   - set user keybinds
 
