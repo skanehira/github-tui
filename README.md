@@ -118,6 +118,10 @@ $ ght owner/repo
 | Comments | `Ctrl-K`             | Check comment and move up.       |
 | Comments | `Ctrl-O`             | Open checked comment on browser. |
 | Comments | `/`                  | filter with inputed words        |
+| Preview  | `/`                  | search with inputed words        |
+| Preview  | `n`                  | move next word                   |
+| Preview  | `N`                  | move previous word               |
+| Preview  | `o`                  | change to fullscreen             |
 
 ### Note
 When you creating issue, you can specify multiple labels, projects and assignees with `,`.

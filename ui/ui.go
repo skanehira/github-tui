@@ -42,7 +42,7 @@ func (ui *ui) canFocus() bool {
 		return false
 	}
 	switch fs.(type) {
-	case *FilterUI, *SelectUI, *viewUI:
+	case *FilterUI, *SelectUI, *ViewUI:
 		return true
 	}
 	return false
@@ -96,6 +96,14 @@ func (ui *ui) Message(msg string, focusFunc func()) {
 	ui.pages.AddAndSwitchToPage("message", ui.Modal(modal, 80, 29), true).ShowPage("main")
 }
 
+func (ui *ui) FullScreenPreview(contents string, focus func()) {
+	CommonViewUI.SetText(contents).ScrollToBeginning()
+	CommonViewUI.setFocus = focus
+	grid := tview.NewGrid().SetRows(0, 1).
+		AddItem(CommonViewUI, 0, 0, 1, 1, 0, 0, true)
+	ui.pages.AddAndSwitchToPage("fullScreenPreview", grid, true).ShowPage("main")
+}
+
 func (ui *ui) Confirm(msg, doLabel string, doFunc func() error, focusFunc func()) {
 	modal := tview.NewModal().
 		SetText(msg).
@@ -118,6 +126,7 @@ func (ui *ui) Start() error {
 	NewFilterUI()
 	NewViewUI(UIKindIssueView)
 	NewViewUI(UIKindCommentView)
+	NewViewUI(UIKindCommonView)
 	NewIssueUI()
 	NewLabelsUI()
 	NewMilestoneUI()

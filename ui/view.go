@@ -9,25 +9,46 @@ import (
 )
 
 var (
-	IssueViewUI   *viewUI
-	CommentViewUI *viewUI
+	IssueViewUI   *ViewUI
+	CommentViewUI *ViewUI
+	CommonViewUI  *ViewUI
 )
 
-type viewUI struct {
+type ViewUI struct {
 	*tview.TextView
 	regionIndex  int
 	regionLength int
 	regionIDs    []string
+	uiKind       UIKind
+	setFocus     func()
 }
 
 func NewViewUI(uiKind UIKind) {
-	ui := &viewUI{
+	ui := &ViewUI{
 		TextView: tview.NewTextView(),
+		uiKind:   uiKind,
 	}
 
 	ui.SetBorder(true).SetTitle(string(uiKind)).SetTitleAlign(tview.AlignLeft)
 	ui.SetDynamicColors(true).SetWordWrap(false).SetRegions(true)
 	ui.SetBorderPadding(1, 1, 1, 1)
+
+	var setFocus func()
+
+	switch uiKind {
+	case UIKindIssueView:
+		IssueViewUI = ui
+		setFocus = func() {
+			UI.app.SetFocus(IssueViewUI)
+		}
+	case UIKindCommentView:
+		CommentViewUI = ui
+		setFocus = func() {
+			UI.app.SetFocus(CommentViewUI)
+		}
+	case UIKindCommonView:
+		CommonViewUI = ui
+	}
 
 	searchFunc := func(input string) {
 		text := ui.GetText(true)
@@ -62,23 +83,23 @@ func NewViewUI(uiKind UIKind) {
 				ui.regionIndex = (ui.regionIndex - 1 + ui.regionLength) % ui.regionLength
 				ui.Highlight(strconv.Itoa(ui.regionIndex)).ScrollToHighlight()
 			}
+		case 'o':
+			if ui.uiKind == UIKindCommonView {
+				UI.pages.SwitchToPage("main")
+				ui.setFocus()
+				return event
+			}
+			UI.FullScreenPreview(ui.GetText(true), setFocus)
 		}
-		switch event.Key() {
-		case tcell.KeyCtrlO:
-			// TODO toggle full screen
-		}
+
+		//switch event.Key() {
+		//}
 		return event
 	})
 
-	switch uiKind {
-	case UIKindIssueView:
-		IssueViewUI = ui
-	case UIKindCommentView:
-		CommentViewUI = ui
-	}
 }
 
-func (ui *viewUI) updateView(text string) {
+func (ui *ViewUI) updateView(text string) {
 	UI.updater <- func() {
 		ui.SetText(text).ScrollToBeginning()
 		//out, err := glamour.Render(text, "dark")
@@ -89,6 +110,6 @@ func (ui *viewUI) updateView(text string) {
 	}
 }
 
-func (v *viewUI) focus() {}
+func (v *ViewUI) focus() {}
 
-func (v *viewUI) blur() {}
+func (v *ViewUI) blur() {}

@@ -25,6 +25,7 @@ const (
 	UIKindProject            = "projects"
 	UIKindIssueView          = "issue preview"
 	UIKindCommentView        = "comment preview"
+	UIKindCommonView         = "preview"
 )
 
 type (
