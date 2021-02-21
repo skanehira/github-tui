@@ -79,7 +79,7 @@ func NewIssueUI() {
 			case 'c':
 				go closeIssues()
 			case 'n':
-				go createIssueForm()
+				createIssueForm()
 			}
 			switch event.Key() {
 			case tcell.KeyCtrlO:
