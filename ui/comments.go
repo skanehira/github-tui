@@ -12,24 +12,31 @@ var CommentUI *SelectUI
 
 func NewCommentUI() {
 	setOpt := func(ui *SelectUI) {
+		getSelectedComments := func() []*domain.Comment {
+			var comments []*domain.Comment
+			if len(CommentUI.selected) == 0 {
+				data := CommentUI.GetSelect()
+				comments = append(comments, data.(*domain.Comment))
+			} else {
+				for _, item := range CommentUI.selected {
+					comments = append(comments, item.(*domain.Comment))
+				}
+			}
+			return comments
+		}
+
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
 			case tcell.KeyCtrlO:
-				for _, s := range CommentUI.selected {
-					comment := s.(*domain.Comment)
+				for _, comment := range getSelectedComments() {
 					if err := utils.Open(comment.URL); err != nil {
 						log.Println(err)
 					}
 				}
-				if len(CommentUI.selected) == 0 {
-					data := CommentUI.GetSelect()
-					if data != nil {
-						if err := utils.Open(data.(*domain.Comment).URL); err != nil {
-							log.Println(err)
-						}
-					}
-				}
+				CommentUI.ClearSelected()
+				CommentUI.UpdateView()
 			}
+
 			return event
 		}
 

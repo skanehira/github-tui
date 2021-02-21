@@ -98,6 +98,7 @@ func NewIssueUI() {
 					log.Println(err)
 				}
 				IssueUI.ClearSelected()
+				IssueUI.UpdateView()
 			case 'o':
 				go func() {
 					var wg sync.WaitGroup
@@ -144,7 +145,10 @@ func NewIssueUI() {
 						log.Println(err)
 					}
 				}
+				IssueUI.ClearSelected()
+				IssueUI.UpdateView()
 			}
+
 			return event
 		}
 
