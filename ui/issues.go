@@ -464,6 +464,9 @@ func createIssueForm() {
 		var userIDs []githubv4.ID
 		if text := assigneesInput.GetText(); text != "" {
 			for _, name := range strings.Split(text, ",") {
+				if name == "" {
+					continue
+				}
 				userIDs = append(userIDs, userMap[name])
 			}
 			input.AssigneeIDs = &userIDs
@@ -473,6 +476,9 @@ func createIssueForm() {
 		var labelIDs []githubv4.ID
 		if text := labelInput.GetText(); text != "" {
 			for _, name := range strings.Split(text, ",") {
+				if name == "" {
+					continue
+				}
 				labelIDs = append(labelIDs, labelMap[name])
 			}
 			input.LabelIDs = &labelIDs
@@ -482,6 +488,9 @@ func createIssueForm() {
 		var projectIDs []githubv4.ID
 		if text := projectInput.GetText(); text != "" {
 			for _, name := range strings.Split(text, ",") {
+				if name == "" {
+					continue
+				}
 				projectIDs = append(projectIDs, projectMap[name])
 			}
 			input.ProjectIDs = &projectIDs
