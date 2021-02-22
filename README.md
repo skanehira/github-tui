@@ -102,6 +102,7 @@ $ ght owner/repo
 | Common   | `Ctrl-B`/`page up`   | Move up by one page.             |
 | Common   | `Ctrl-N`             | Move next UI.                    |
 | Common   | `Ctrl-P`             | Move previous UI.                |
+| Common   | `Ctrl-C`             | Finish app.                      |
 | Filters  | `Enter`              | Search with inputed query.       |
 | Issues   | `h`/`left arrow`     | Move left by one column.         |
 | Issues   | `l`/`right arrow`    | Move right by one column.        |
