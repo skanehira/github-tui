@@ -76,9 +76,9 @@ The config.yaml path must be in the bellow place.
 
 | OS         | place                                               |
 |------------|-----------------------------------------------------|
-| Window     | `%AppData%¥ghf¥config.yaml`                         |
-| Mac        | `$HOME/Library/Application Support/ghf/config.yaml` |
-| Linux/Unix | `$HOME/.config/ghf/config.yaml`                     |
+| Window     | `%AppData%¥ght¥config.yaml`                         |
+| Mac        | `$HOME/Library/Application Support/ght/config.yaml` |
+| Linux/Unix | `$HOME/.config/ght/config.yaml`                     |
 
 ## Usage
 
