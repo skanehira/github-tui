@@ -17,7 +17,7 @@ const (
 type UIKind string
 
 const (
-	UIKindIssue       UIKind = "issus"
+	UIKindIssue       UIKind = "issues"
 	UIKindAssignee           = "assignees"
 	UIKindComment            = "comments"
 	UIKindLabel              = "labels"
