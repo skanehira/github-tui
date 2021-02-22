@@ -10,7 +10,7 @@ import (
 )
 
 func Edit(contents *string) error {
-	f, err := ioutil.TempFile("", "")
+	f, err := ioutil.TempFile("", "*.md")
 	if err != nil {
 		return err
 	}
