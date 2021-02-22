@@ -201,7 +201,7 @@ func (ui *SelectUI) Init() {
 		}
 
 		switch event.Rune() {
-		case 'G':
+		case 'f':
 			go ui.FetchList()
 		case '/':
 			SearchUI.SetSerachFunc(searchFunc)

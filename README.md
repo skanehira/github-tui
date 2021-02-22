@@ -113,6 +113,7 @@ $ ght owner/repo
 | Issues   | `Ctrl-O`             | Open checked issue on browser.   |
 | Issues   | `/`                  | filter with inputed words        |
 | Issues   | `n`                  | Create new issue.                |
+| Issues   | `f`                  | Fetch more issue.                |
 | Comments | `h`/`left arrow`     | Move left by one column.         |
 | Comments | `l`/`right arrow`    | Move right by one column.        |
 | Comments | `Ctrl-J`             | Check comment and move down.     |
