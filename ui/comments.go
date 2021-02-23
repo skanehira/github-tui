@@ -157,6 +157,13 @@ func editCommentBody(body *string) (err error) {
 	UI.app.Suspend(func() {
 		err = utils.Edit(body)
 	})
+	if err != nil {
+		return
+	}
+
+	if *body == "" {
+		return domain.ErrCommentBodyIsEmpty
+	}
 	return
 }
 
