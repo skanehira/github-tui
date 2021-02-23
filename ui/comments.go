@@ -51,7 +51,36 @@ func NewCommentUI() {
 				})
 
 			case 'n':
-				// TODO implement create comment
+				focus := func() {
+					UI.app.SetFocus(CommentUI)
+				}
+				item := IssueUI.GetSelect()
+				if item == nil {
+					UI.Message("not found issue", focus)
+					return event
+				}
+
+				var body string
+
+				if err := editCommentBody(&body); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
+
+				input := githubv4.AddCommentInput{
+					SubjectID: githubv4.ID(item.Key()),
+					Body:      githubv4.String(body),
+				}
+
+				if err := github.AddIssueComment(input); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
+
+				if err := updateCommentUI(); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
 			case 'e':
 				item := ui.GetSelect()
 				if item == nil {

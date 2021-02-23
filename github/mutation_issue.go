@@ -33,3 +33,9 @@ type MutateUpdateIssue struct {
 		}
 	} `graphql:"updateIssue(input: $input)"`
 }
+
+type MutateAddIssueComment struct {
+	AddIssueComment struct {
+		ClientMutationID githubv4.String
+	} `graphql:"addComment(input: $input)"`
+}

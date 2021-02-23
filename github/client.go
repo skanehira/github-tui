@@ -169,3 +169,8 @@ func UpdateIssueComment(input githubv4.UpdateIssueCommentInput) error {
 	var m MutateUpdateIssueComment
 	return client.Mutate(context.Background(), &m, input, nil)
 }
+
+func AddIssueComment(input githubv4.AddCommentInput) error {
+	var m MutateAddIssueComment
+	return client.Mutate(context.Background(), &m, input, nil)
+}
