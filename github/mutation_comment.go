@@ -7,3 +7,9 @@ type MutateDeleteComment struct {
 		ClientMutationId githubv4.String
 	} `graphql:"deleteIssueComment(input: $input)"`
 }
+
+type MutateUpdateIssueComment struct {
+	UpdateIssueComment struct {
+		ClientMutationId githubv4.String
+	} `graphql:"updateIssueComment(input: $input)"`
+}

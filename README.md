@@ -20,13 +20,13 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - list
   - preview
   - delete
+  - edit
 
 ### Still Under Development
 - Issue
   - add assignees, labels, projects, milestone
   - remove assignees, labels, projects, milestone
 - Issue comment
-  - edit
   - add
 - PR
   - list

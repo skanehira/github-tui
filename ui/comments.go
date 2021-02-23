@@ -52,6 +52,43 @@ func NewCommentUI() {
 
 			case 'n':
 				// TODO implement create comment
+			case 'e':
+				item := ui.GetSelect()
+				if item == nil {
+					return event
+				}
+
+				focus := func() {
+					UI.app.SetFocus(CommentUI)
+				}
+
+				comment := item.(*domain.Comment)
+				oldBody := comment.Body
+
+				if err := editCommentBody(&comment.Body); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
+
+				// if comment body is not changed, do nothing
+				if oldBody == comment.Body {
+					return event
+				}
+
+				input := githubv4.UpdateIssueCommentInput{
+					ID:   githubv4.ID(comment.ID),
+					Body: githubv4.String(comment.Body),
+				}
+
+				if err := github.UpdateIssueComment(input); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
+
+				if err := updateCommentUI(); err != nil {
+					UI.Message(err.Error(), focus)
+					return event
+				}
 			}
 
 			switch event.Key() {
@@ -85,6 +122,13 @@ func NewCommentUI() {
 	})
 
 	CommentUI = ui
+}
+
+func editCommentBody(body *string) (err error) {
+	UI.app.Suspend(func() {
+		err = utils.Edit(body)
+	})
+	return
 }
 
 func getSelectedComments() []*domain.Comment {
