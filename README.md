@@ -120,6 +120,7 @@ $ ght owner/repo
 | Comments | `Ctrl-J`             | Check comment and move down.     |
 | Comments | `Ctrl-K`             | Check comment and move up.       |
 | Comments | `Ctrl-O`             | Open checked comment on browser. |
+| Comments | `e`                  | Edit and update comment body.    |
 | Comments | `/`                  | filter with inputed words        |
 | Preview  | `/`                  | search with inputed words        |
 | Preview  | `n`                  | move next word                   |
