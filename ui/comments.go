@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"errors"
 	"log"
 	"strconv"
 
@@ -20,103 +19,18 @@ func NewCommentUI() {
 		ui.capture = func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Rune() {
 			case 'd':
-				UI.Confirm("Do you want to delete comments?", "Yes", func() error {
-					comments := getSelectedComments()
-					if len(comments) == 0 {
-						return nil
-					}
-
-					var eg errgroup.Group
-					for _, comment := range comments {
-						id := comment.ID
-						eg.Go(func() error {
-							return github.DeleteIssueComment(id)
-						})
-					}
-
-					// When all the processing is completed this error be returned
-					// because if some of delete action be success, need to update view
-					deleteErr := eg.Wait()
-					if deleteErr != nil {
-						log.Println(deleteErr)
-					}
-
-					if err := updateCommentUI(); err != nil {
-						return err
-					}
-
-					return deleteErr
-				}, func() {
-					UI.app.SetFocus(CommentUI)
-				})
-
+				deleteComment()
 			case 'n':
-				focus := func() {
-					UI.app.SetFocus(CommentUI)
-				}
-				item := IssueUI.GetSelect()
-				if item == nil {
-					UI.Message("not found issue", focus)
-					return event
-				}
-
-				var body string
-
-				if err := editCommentBody(&body); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
-				}
-
-				input := githubv4.AddCommentInput{
-					SubjectID: githubv4.ID(item.Key()),
-					Body:      githubv4.String(body),
-				}
-
-				if err := github.AddIssueComment(input); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
-				}
-
-				if err := updateCommentUI(); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
+				if err := createComment(); err != nil {
+					UI.Message("not found issue", func() {
+						UI.app.SetFocus(CommentUI)
+					})
 				}
 			case 'e':
-				item := ui.GetSelect()
-				if item == nil {
-					return event
-				}
-
-				focus := func() {
-					UI.app.SetFocus(CommentUI)
-				}
-
-				comment := item.(*domain.Comment)
-				oldBody := comment.Body
-
-				if err := editCommentBody(&comment.Body); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
-				}
-
-				// if comment body is not changed, do nothing
-				if oldBody == comment.Body {
-					return event
-				}
-
-				input := githubv4.UpdateIssueCommentInput{
-					ID:   githubv4.ID(comment.ID),
-					Body: githubv4.String(comment.Body),
-				}
-
-				if err := github.UpdateIssueComment(input); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
-				}
-
-				if err := updateCommentUI(); err != nil {
-					UI.Message(err.Error(), focus)
-					return event
+				if err := editComment(); err != nil {
+					UI.Message(err.Error(), func() {
+						UI.app.SetFocus(CommentUI)
+					})
 				}
 			}
 
@@ -153,6 +67,99 @@ func NewCommentUI() {
 	CommentUI = ui
 }
 
+func createComment() error {
+	item := IssueUI.GetSelect()
+	if item == nil {
+		return domain.ErrNotFoundIssue
+	}
+
+	var body string
+
+	if err := editCommentBody(&body); err != nil {
+		return err
+	}
+
+	input := githubv4.AddCommentInput{
+		SubjectID: githubv4.ID(item.Key()),
+		Body:      githubv4.String(body),
+	}
+
+	if err := github.AddIssueComment(input); err != nil {
+		return err
+	}
+
+	if err := updateCommentUI(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func deleteComment() {
+	UI.Confirm("Do you want to delete comments?", "Yes", func() error {
+		comments := getSelectedComments()
+		if len(comments) == 0 {
+			return nil
+		}
+
+		var eg errgroup.Group
+		for _, comment := range comments {
+			id := comment.ID
+			eg.Go(func() error {
+				return github.DeleteIssueComment(id)
+			})
+		}
+
+		// When all the processing is completed this error be returned
+		// because if some of delete action be success, need to update view
+		deleteErr := eg.Wait()
+		if deleteErr != nil {
+			log.Println(deleteErr)
+		}
+
+		if err := updateCommentUI(); err != nil {
+			return err
+		}
+
+		return deleteErr
+	}, func() {
+		UI.app.SetFocus(CommentUI)
+	})
+}
+
+func editComment() error {
+	item := CommentUI.GetSelect()
+	if item == nil {
+		return domain.ErrNotFoundComment
+	}
+
+	comment := item.(*domain.Comment)
+	oldBody := comment.Body
+
+	if err := editCommentBody(&comment.Body); err != nil {
+		return err
+	}
+
+	// if comment body is not changed, do nothing
+	if oldBody == comment.Body {
+		return domain.ErrCommentBodyIsNotChanged
+	}
+
+	input := githubv4.UpdateIssueCommentInput{
+		ID:   githubv4.ID(comment.ID),
+		Body: githubv4.String(comment.Body),
+	}
+
+	if err := github.UpdateIssueComment(input); err != nil {
+		return err
+	}
+
+	if err := updateCommentUI(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func editCommentBody(body *string) (err error) {
 	UI.app.Suspend(func() {
 		err = utils.Edit(body)
@@ -183,7 +190,7 @@ func getSelectedComments() []*domain.Comment {
 func updateCommentUI() error {
 	item := IssueUI.GetSelect()
 	if item == nil {
-		return errors.New("not found issue")
+		return domain.ErrNotFoundIssue
 	}
 	oldIssue := item.(*domain.Issue)
 
