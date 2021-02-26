@@ -21,13 +21,13 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - preview
   - delete
   - edit
+	- add
+	- quote reply
 
 ### Still Under Development
 - Issue
   - add assignees, labels, projects, milestone
   - remove assignees, labels, projects, milestone
-- Issue comment
-  - add
 - PR
   - list
   - edit comment
@@ -122,6 +122,7 @@ $ ght owner/repo
 | Comments | `Ctrl-O`             | Open checked comment on browser. |
 | Comments | `n`                  | Add new issue comment.           |
 | Comments | `e`                  | Edit and update comment body.    |
+| Comments | `r`                  | Quote reply comment.             |
 | Comments | `/`                  | filter with inputed words        |
 | Preview  | `/`                  | search with inputed words        |
 | Preview  | `n`                  | move next word                   |
