@@ -21,8 +21,8 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - preview
   - delete
   - edit
-	- add
-	- quote reply
+  - add
+  - quote reply
 
 ### Still Under Development
 - Issue
