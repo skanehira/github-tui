@@ -91,7 +91,6 @@ func quoteReply() error {
 	lines := strings.Split(comment.Body, "\n")
 	for i := range lines {
 		lines[i] = fmt.Sprintf("> %s", lines[i])
-		log.Println(lines[i])
 	}
 
 	body := strings.Join(lines, "\n")
