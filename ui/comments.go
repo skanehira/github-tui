@@ -1,8 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/shurcooL/githubv4"
@@ -21,13 +23,25 @@ func NewCommentUI() {
 			case 'd':
 				deleteComment()
 			case 'n':
-				if err := createComment(); err != nil {
-					UI.Message("not found issue", func() {
+				item := IssueUI.GetSelect()
+				if item == nil {
+					return event
+				}
+				issue := item.(*domain.Issue)
+
+				if err := createComment(item, issue.Body); err != nil {
+					UI.Message(err.Error(), func() {
 						UI.app.SetFocus(CommentUI)
 					})
 				}
 			case 'e':
 				if err := editComment(); err != nil {
+					UI.Message(err.Error(), func() {
+						UI.app.SetFocus(CommentUI)
+					})
+				}
+			case 'r':
+				if err := quoteReply(); err != nil {
 					UI.Message(err.Error(), func() {
 						UI.app.SetFocus(CommentUI)
 					})
@@ -67,14 +81,33 @@ func NewCommentUI() {
 	CommentUI = ui
 }
 
-func createComment() error {
-	item := IssueUI.GetSelect()
+func quoteReply() error {
+	item := CommentUI.GetSelect()
+	if item == nil {
+		return domain.ErrNotFoundComment
+	}
+
+	comment := item.(*domain.Comment)
+	lines := strings.Split(comment.Body, "\n")
+	for i := range lines {
+		lines[i] = fmt.Sprintf("> %s", lines[i])
+		log.Println(lines[i])
+	}
+
+	body := strings.Join(lines, "\n")
+
+	item = IssueUI.GetSelect()
 	if item == nil {
 		return domain.ErrNotFoundIssue
 	}
+	if err := createComment(item, body); err != nil {
+		return err
+	}
 
-	var body string
+	return nil
+}
 
+func createComment(item domain.Item, body string) error {
 	if err := editCommentBody(&body); err != nil {
 		return err
 	}
