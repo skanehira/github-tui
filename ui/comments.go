@@ -27,9 +27,7 @@ func NewCommentUI() {
 				if item == nil {
 					return event
 				}
-				issue := item.(*domain.Issue)
-
-				if err := createComment(item, issue.Body); err != nil {
+				if err := createComment(item, ""); err != nil {
 					UI.Message(err.Error(), func() {
 						UI.app.SetFocus(CommentUI)
 					})
