@@ -174,7 +174,7 @@ func editComment() error {
 
 	// if comment body is not changed, do nothing
 	if oldBody == comment.Body {
-		return domain.ErrCommentBodyIsNotChanged
+		return nil
 	}
 
 	input := githubv4.UpdateIssueCommentInput{
