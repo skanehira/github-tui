@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"fmt"
+
+	"github.com/gdamore/tcell/v2"
+)
 
 type Issue struct {
 	ID        string
@@ -30,7 +34,7 @@ func (i *Issue) Fields() []Field {
 	}
 
 	f := []Field{
-		{Text: i.Repo, Color: tcell.ColorLightSalmon},
+		{Text: fmt.Sprintf("%s/%s", i.RepoOwner, i.Repo), Color: tcell.ColorLightSalmon},
 		{Text: i.Number, Color: tcell.ColorBlue},
 		{Text: i.State, Color: stateColor},
 		{Text: i.Author, Color: tcell.ColorYellow},
