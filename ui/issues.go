@@ -504,6 +504,18 @@ func createIssueForm() {
 		UI.app.SetFocus(IssueUI)
 	})
 
+	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlN:
+			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
+		case tcell.KeyCtrlP:
+			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
+		}
+		return event
+	})
+
 	UI.pages.AddAndSwitchToPage("form", UI.Modal(form, 100, 19), true).ShowPage("main")
 }
 
