@@ -103,7 +103,7 @@ $ ght owner/repo
 | Common   | `Ctrl-N`             | Move next UI.                    |
 | Common   | `Ctrl-P`             | Move previous UI.                |
 | Common   | `Ctrl-C`             | Finish app.                      |
-| Common   | `Ctrl-I`             | Focus to Issues                  |
+| Common   | `Ctrl-G`             | Focus to Issues                  |
 | Common   | `Ctrl-T`             | Focus to Filters                 |
 | Filters  | `Enter`              | Search with enter query.         |
 | Issues   | `h`/`left arrow`     | Move left by one column.         |

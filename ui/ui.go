@@ -165,7 +165,7 @@ func (ui *ui) Start() error {
 			UI.toNextUI()
 		case tcell.KeyCtrlP:
 			UI.toPrevUI()
-		case tcell.KeyCtrlI:
+		case tcell.KeyCtrlG:
 			ui.primitives[ui.current].blur()
 			ui.current = 5
 			p := ui.primitives[ui.current]
