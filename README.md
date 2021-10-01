@@ -36,7 +36,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - diff
   - create
   - close
-  - chanage base
+  - change base
   - merge
 - Github Actions
   - re-run
@@ -55,7 +55,7 @@ If you are using Vim, you can use [gh.vim](https://github.com/skanehira/gh.vim) 
   - open browser
 - config
   - set default editor
-  - set user keybinds
+  - set user keybindings
 
 ## Installation
 
@@ -90,9 +90,9 @@ $ ght
 $ ght owner/repo
 ```
 
-### Keybinds
+### Keybindings
 
-| UI       | Keybind              | Description                      |
+| UI       | Keybinding           | Description                      |
 |----------|----------------------|----------------------------------|
 | Common   | `j`/`down arrow`     | Move down by one row.            |
 | Common   | `k`/`up arrow`       | Move up by one row.              |
@@ -103,7 +103,9 @@ $ ght owner/repo
 | Common   | `Ctrl-N`             | Move next UI.                    |
 | Common   | `Ctrl-P`             | Move previous UI.                |
 | Common   | `Ctrl-C`             | Finish app.                      |
-| Filters  | `Enter`              | Search with inputed query.       |
+| Common   | `Ctrl-I`             | Focus to Issues                  |
+| Common   | `Ctrl-T`             | Focus to Filters                 |
+| Filters  | `Enter`              | Search with enter query.         |
 | Issues   | `h`/`left arrow`     | Move left by one column.         |
 | Issues   | `l`/`right arrow`    | Move right by one column.        |
 | Issues   | `Ctrl-J`             | Check issue and move down.       |
@@ -112,7 +114,7 @@ $ ght owner/repo
 | Issues   | `o`                  | Open checked issue.              |
 | Issues   | `c`                  | Close checked issue.             |
 | Issues   | `Ctrl-O`             | Open checked issue on browser.   |
-| Issues   | `/`                  | filter with inputed words        |
+| Issues   | `/`                  | filter with enter words          |
 | Issues   | `n`                  | Create new issue.                |
 | Issues   | `f`                  | Fetch more issue.                |
 | Comments | `h`/`left arrow`     | Move left by one column.         |
@@ -123,11 +125,11 @@ $ ght owner/repo
 | Comments | `n`                  | Add new issue comment.           |
 | Comments | `e`                  | Edit and update comment body.    |
 | Comments | `r`                  | Quote reply comment.             |
-| Comments | `/`                  | filter with inputed words        |
-| Preview  | `/`                  | search with inputed words        |
+| Comments | `/`                  | filter with enter words          |
+| Preview  | `/`                  | search with enter words          |
 | Preview  | `n`                  | move next word                   |
 | Preview  | `N`                  | move previous word               |
-| Preview  | `o`                  | change to fullscreen             |
+| Preview  | `o`                  | change to full screen            |
 
 ### Note
 When you creating issue, you can specify multiple labels, projects and assignees with `,`.
@@ -136,7 +138,7 @@ For instance, when you specify 2 labels then must input `label1,label2`.
 ![](https://i.gyazo.com/fb665369057c5f096517a24e606e7884.png)
 
 When you edit issue body with `Edit Body` button then `$EDITOR` be used.
-If `$EDITOR` is emtpy or not set, `Vim` be used.
+If `$EDITOR` is empty or not set, `vim` wll be used.
 
 ## Author
 skanehira

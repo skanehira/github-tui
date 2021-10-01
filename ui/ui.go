@@ -165,6 +165,18 @@ func (ui *ui) Start() error {
 			UI.toNextUI()
 		case tcell.KeyCtrlP:
 			UI.toPrevUI()
+		case tcell.KeyCtrlI:
+			ui.primitives[ui.current].blur()
+			ui.current = 5
+			p := ui.primitives[ui.current]
+			p.focus()
+			ui.app.SetFocus(IssueUI)
+		case tcell.KeyCtrlT:
+			ui.primitives[ui.current].blur()
+			ui.current = 0
+			p := ui.primitives[ui.current]
+			p.focus()
+			ui.app.SetFocus(IssueFilterUI)
 		}
 		return event
 	})
