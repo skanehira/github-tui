@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -32,15 +31,17 @@ func Init() {
 
 	configFile := filepath.Join(configDir, "ght", "config.yaml")
 
-	b, err := ioutil.ReadFile(configFile)
+	b, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	logFile := filepath.Join(configDir, "ght", "debug.log")
 	output, err := os.Create(logFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	log.SetOutput(output)
 
 	var conf struct {
