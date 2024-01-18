@@ -1,6 +1,7 @@
 package config
 
 import (
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,6 +32,14 @@ func Init() {
 		log.Fatal(err)
 	}
 
+	logFile := filepath.Join(configDir, "ght", "debug.log")
+	output, err := os.Create(logFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.SetOutput(io.MultiWriter(output, os.Stderr))
+
 	configFile := filepath.Join(configDir, "ght", "config.yaml")
 
 	b, err := os.ReadFile(configFile)
@@ -41,15 +50,6 @@ func Init() {
 
 		log.Fatalf("Could not find configuration file, %s", readThisMessage)
 	}
-
-	logFile := filepath.Join(configDir, "ght", "debug.log")
-
-	output, err := os.Create(logFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.SetOutput(output)
 
 	var conf struct {
 		GitHub github `yaml:"github"`
