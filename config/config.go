@@ -18,6 +18,8 @@ type app struct {
 	File string `yaml:"file"`
 }
 
+const readThisMessage = "read this https://github.com/skanehira/github-tui?tab=readme-ov-file#settings to know more"
+
 var (
 	GitHub github
 	App    app
@@ -33,10 +35,15 @@ func Init() {
 
 	b, err := os.ReadFile(configFile)
 	if err != nil {
-		log.Fatal(err)
+		if !os.IsNotExist(err) {
+			log.Fatal(err)
+		}
+
+		log.Fatalf("Could not find configuration file, %s", readThisMessage)
 	}
 
 	logFile := filepath.Join(configDir, "ght", "debug.log")
+
 	output, err := os.Create(logFile)
 	if err != nil {
 		log.Fatal(err)
@@ -49,14 +56,13 @@ func Init() {
 	}
 
 	if err := yaml.Unmarshal(b, &conf); err != nil {
-		log.Fatal(err)
+		log.Fatalf("cannot deserialize config file: %s", err.Error())
 	}
 
 	if conf.GitHub.Token == "" {
-		log.Fatal("github token is empty")
+		log.Fatalf("github token is empty, %s", readThisMessage)
 	}
 
 	App.File = configFile
-
 	GitHub = conf.GitHub
 }
