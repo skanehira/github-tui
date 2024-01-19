@@ -56,7 +56,7 @@ func Init() {
 	}
 
 	if err := yaml.Unmarshal(b, &conf); err != nil {
-		log.Fatalf("cannot deserialize config file: %s", err.Error())
+		log.Fatalf("cannot deserialize config file: %s", err)
 	}
 
 	if conf.GitHub.Token == "" {
